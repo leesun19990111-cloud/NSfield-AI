@@ -22,6 +22,9 @@
 /.next/
 /out/
 
+# prisma generated client (re-created by `prisma generate` / postinstall)
+/lib/generated/
+
 # production
 /build
 
