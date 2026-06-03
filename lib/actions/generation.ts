@@ -9,11 +9,9 @@ import { getImageAdapter, getVideoAdapter } from '@/lib/models/registry'
 import { uploadGenerationImages } from '@/lib/storage/upload'
 import { computeSettlementKrw } from '@/lib/generation/settle'
 import { checkDualLimit, RATE_LIMITS } from '@/lib/rate-limit/token-bucket'
-import {
-  imageGenerateSchema, type ImageGenerateInput,
-  videoGenerateSchema, type VideoGenerateInput,
-} from '@/lib/validation/generation'
-import type { ModelMeta, PricingJson } from '@/lib/models/types'
+import { getModelConfig } from '@/lib/models/catalog/registry'
+import { buildInputSchema } from '@/lib/validation/dynamic'
+import type { ModelMeta, PricingJson, GenerationParams } from '@/lib/models/types'
 import { revalidatePath } from 'next/cache'
 
 function toModelMeta(m: {
@@ -36,19 +34,31 @@ export type EstimateInput = {
   prompt: string
   count?: number
   duration_sec?: number
+  [k: string]: unknown
 }
 
 export async function estimateGeneration(input: EstimateInput): Promise<EstimateResult> {
   await requireUser()
-  if (!input?.modelId || !input?.prompt || !input.prompt.trim()) {
+  if (!input?.modelId || !input?.prompt || !String(input.prompt).trim()) {
     return { ok: false, message: '입력값을 확인해주세요.' }
   }
   const model = await prisma.model.findUnique({ where: { id: input.modelId } })
   if (!model || !model.is_active) return { ok: false, message: '사용할 수 없는 모델입니다.' }
+  const config = getModelConfig(model.id)
+  if (!config) return { ok: false, message: '모델 설정을 찾을 수 없습니다.' }
   const meta = toModelMeta(model)
+
+  // 영상이면 durationParam 값(또는 명시적 duration_sec)을 가격용 duration_sec로 매핑.
+  const durationVal = config.durationParam
+    ? input[config.durationParam] ?? input.duration_sec
+    : input.duration_sec
   let billedUsd: number
   try {
-    billedUsd = estimateBilledUsd(meta, { prompt: input.prompt, count: input.count, duration_sec: input.duration_sec })
+    billedUsd = estimateBilledUsd(meta, {
+      prompt: String(input.prompt),
+      count: input.count,
+      duration_sec: durationVal !== undefined ? Number(durationVal) : undefined,
+    })
   } catch (e) {
     if (e instanceof UnsupportedDurationError) return { ok: false, message: '지원하지 않는 길이입니다.' }
     throw e
@@ -63,48 +73,87 @@ export type CreateResult =
   | { ok: true; generationId: string }
   | { ok: false; code: 'VALIDATION' | 'MODEL' | 'INSUFFICIENT' | 'ADAPTER' | 'DURATION' | 'RATE_LIMIT' | 'UNKNOWN'; message: string }
 
-export async function createImageGeneration(input: ImageGenerateInput): Promise<CreateResult> {
+// 모델-불문 통합 생성 액션. 입력은 config 기반 동적 zod로 검증되어 어댑터에 그대로 전달된다.
+// 이미지=동기(생성→업로드→정산), 영상=비동기(작업등록→RUNNING, 확정은 폴링 cron).
+export async function createGeneration(
+  modelId: string,
+  inputs: Record<string, unknown>,
+): Promise<CreateResult> {
   const user = await requireUser()
+
+  const model = await prisma.model.findUnique({ where: { id: modelId } })
+  if (!model || !model.is_active) {
+    return { ok: false, code: 'MODEL', message: '사용할 수 없는 모델입니다.' }
+  }
+  const dbKind = model.kind as 'IMAGE' | 'VIDEO'
+  const config = getModelConfig(model.id)
+  if (!config) return { ok: false, code: 'MODEL', message: '모델 설정을 찾을 수 없습니다.' }
+
+  // 1) 입력 검증 (config 기반)
+  const schema = buildInputSchema(config)
+  const parsed = schema.safeParse(inputs)
+  if (!parsed.success) return { ok: false, code: 'VALIDATION', message: '입력값을 확인해주세요.' }
+  const data = parsed.data
+
+  // 2) 레이트 리밋 (ADMIN 면제)
   if (user.role !== 'ADMIN') {
-    const ok = await checkDualLimit(user.id, 'image_gen', RATE_LIMITS.image_gen.perMin, RATE_LIMITS.image_gen.perHour)
+    const key = dbKind === 'IMAGE' ? 'image_gen' : 'video_gen'
+    const ok = await checkDualLimit(user.id, key, RATE_LIMITS[key].perMin, RATE_LIMITS[key].perHour)
     if (!ok) return { ok: false, code: 'RATE_LIMIT', message: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.' }
   }
-  const parsed = imageGenerateSchema.safeParse(input)
-  if (!parsed.success) return { ok: false, code: 'VALIDATION', message: '입력값을 확인해주세요.' }
-  const d = parsed.data
 
-  const model = await prisma.model.findUnique({ where: { id: d.modelId } })
-  if (!model || !model.is_active || model.kind !== 'IMAGE') {
-    return { ok: false, code: 'MODEL', message: '사용할 수 없는 이미지 모델입니다.' }
+  const imageAdapter = dbKind === 'IMAGE' ? getImageAdapter(model.id) : null
+  const videoAdapter = dbKind === 'VIDEO' ? getVideoAdapter(model.id) : null
+  if (dbKind === 'IMAGE' ? !imageAdapter : !videoAdapter) {
+    return { ok: false, code: 'MODEL', message: '모델 어댑터가 없습니다.' }
   }
-  const meta = toModelMeta(model)
-  const adapter = getImageAdapter(model.id)
-  if (!adapter) return { ok: false, code: 'MODEL', message: '모델 어댑터가 없습니다.' }
 
   const wallet = await prisma.wallet.findUnique({ where: { user_id: user.id } })
   if (!wallet) return { ok: false, code: 'UNKNOWN', message: '지갑을 찾을 수 없습니다.' }
 
-  const billedUsd = estimateBilledUsd(meta, { prompt: d.prompt, count: d.count })
+  const meta = toModelMeta(model)
+  const prompt = String(data.prompt ?? '')
+
+  // 가격: 영상이면 durationParam 값을 duration_sec로 매핑.
+  // (durationParam 키가 없으면 명시적 duration_sec로 폴백 — estimateGeneration과 동일 규약)
+  // duration_sec는 필드로 선언되지 않아 strip될 수 있으므로 raw inputs에서도 폴백한다.
+  const durationVal = config.durationParam
+    ? data[config.durationParam] ?? inputs.duration_sec
+    : inputs.duration_sec
+  let billedUsd: number
+  try {
+    billedUsd = estimateBilledUsd(meta, {
+      prompt,
+      count: typeof inputs.count === 'number' && inputs.count > 0 ? inputs.count : 1,
+      duration_sec: durationVal !== undefined ? Number(durationVal) : undefined,
+    })
+  } catch (e) {
+    if (e instanceof UnsupportedDurationError) return { ok: false, code: 'DURATION', message: '지원하지 않는 길이입니다.' }
+    console.error('[createGeneration] pricing failed:', e)
+    return { ok: false, code: 'UNKNOWN', message: '가격 계산에 실패했습니다.' }
+  }
+
   let fxRate: number
   try { fxRate = await getCurrentFxRate() }
   catch { return { ok: false, code: 'UNKNOWN', message: '환율 정보를 가져올 수 없습니다. 잠시 후 다시 시도해주세요.' } }
   const krw = usdToKrw(billedUsd, fxRate)
 
-  // 1) Generation(PENDING) + 견적 차감(CHARGE)을 한 트랜잭션으로. 잔액부족 → 롤백.
+  // 3) Generation(PENDING) + 견적 차감(CHARGE)을 한 트랜잭션으로. 잔액부족 → 롤백.
   let generationId: string
   try {
     // pgBouncer transaction mode에서도 interactive tx는 BEGIN~COMMIT 동안 서버 커넥션이
-    // pin되므로 wallet_apply_tx 내부의 FOR UPDATE 락이 보장된다. (DATABASE_URL=pooler ?pgbouncer=true)
+    // pin되므로 wallet_apply_tx 내부의 FOR UPDATE 락이 보장된다.
     const created = await prisma.$transaction(async (tx) => {
       const gen = await tx.generation.create({
         data: {
-          user_id: user.id, model_id: model.id, kind: 'IMAGE',
-          prompt: d.prompt, params_json: { count: d.count },
+          user_id: user.id, model_id: model.id, kind: dbKind,
+          prompt, params_json: data as object,
           status: 'PENDING',
           cost_usd_billed: billedUsd, margin_pct: meta.margin_pct, fx_rate: fxRate, charged_krw: krw,
         },
       })
-      await tx.$executeRaw`SELECT wallet_apply_tx(${wallet.id}::text, 'CHARGE', ${-krw}::int, 'generation', ${gen.id}::text, ${'이미지 생성'})`
+      const memo = dbKind === 'IMAGE' ? '이미지 생성' : '영상 생성'
+      await tx.$executeRaw`SELECT wallet_apply_tx(${wallet.id}::text, 'CHARGE', ${-krw}::int, 'generation', ${gen.id}::text, ${memo})`
       return gen
     })
     generationId = created.id
@@ -113,132 +162,76 @@ export async function createImageGeneration(input: ImageGenerateInput): Promise<
     if (msg.includes('INSUFFICIENT_BALANCE')) {
       return { ok: false, code: 'INSUFFICIENT', message: `잔액이 부족합니다. (필요: ₩${krw.toLocaleString('ko-KR')})` }
     }
-    console.error('[createImageGeneration] charge tx failed:', e)
+    console.error('[createGeneration] charge tx failed:', e)
     return { ok: false, code: 'UNKNOWN', message: '생성 요청 처리에 실패했습니다.' }
   }
 
-  // 2) RUNNING
-  await prisma.generation.update({ where: { id: generationId }, data: { status: 'RUNNING', started_at: new Date() } })
+  const adapterParams = data as GenerationParams
 
-  // 3) 외부 어댑터 호출 → 실패 시 전액 환불
-  try {
-    const result = await adapter.generate({ prompt: d.prompt, count: d.count })
-    const uploads = result.images.map((img, i) => ({
-      path: `${user.id}/${generationId}/output_${i}.png`,
-      b64: img.b64, contentType: img.contentType,
-    }))
-    const paths = await uploadGenerationImages(uploads)
+  if (dbKind === 'IMAGE') {
+    // 2) RUNNING
+    await prisma.generation.update({ where: { id: generationId }, data: { status: 'RUNNING', started_at: new Date() } })
 
-    // 4) 정산: 실제 > 견적이면 차액만 추가 차감. 이미지 고정가 모델은 extra=0(미발화).
-    //    정산 차감이 실패해도 생성 자체는 성공 처리한다(결과물은 이미 저장됨). 차액은 사후 보정 대상.
-    const actualBilledKrw = krw
-    const extra = computeSettlementKrw(krw, actualBilledKrw)
-    if (extra > 0) {
-      try {
-        await prisma.$executeRaw`SELECT wallet_apply_tx(${wallet.id}::text, 'CHARGE', ${-extra}::int, 'generation', ${generationId}::text, ${'정산 차액'})`
-      } catch (settleErr) {
-        console.error('[createImageGeneration] settlement charge failed (generation still succeeds):', generationId, settleErr)
+    // 3) 외부 어댑터 호출 → 실패 시 전액 환불
+    try {
+      const result = await imageAdapter!.generate(adapterParams)
+      const uploads = result.images.map((img, i) => ({
+        path: `${user.id}/${generationId}/output_${i}.png`,
+        b64: img.b64, contentType: img.contentType,
+      }))
+      const paths = await uploadGenerationImages(uploads)
+
+      // 4) 정산: 실제 > 견적이면 차액만 추가 차감. 이미지 고정가 모델은 extra=0(미발화).
+      //    정산 차감이 실패해도 생성 자체는 성공 처리한다(결과물은 이미 저장됨).
+      const actualBilledKrw = krw
+      const extra = computeSettlementKrw(krw, actualBilledKrw)
+      if (extra > 0) {
+        try {
+          await prisma.$executeRaw`SELECT wallet_apply_tx(${wallet.id}::text, 'CHARGE', ${-extra}::int, 'generation', ${generationId}::text, ${'정산 차액'})`
+        } catch (settleErr) {
+          console.error('[createGeneration] settlement charge failed (generation still succeeds):', generationId, settleErr)
+        }
       }
-    }
 
-    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-    await prisma.generation.update({
-      where: { id: generationId },
-      data: {
-        status: 'SUCCEEDED', result_urls: paths, finished_at: new Date(),
-        expires_at: expiresAt, cost_usd_raw: result.cost_usd_raw,
-        result_meta_json: (result.meta ?? {}) as object,
-      },
-    })
-    revalidatePath('/library')
-    return { ok: true, generationId }
-  } catch (e) {
-    console.error('[createImageGeneration] adapter/storage failed:', e)
-    try {
-      await prisma.$executeRaw`SELECT wallet_apply_tx(${wallet.id}::text, 'REFUND', ${krw}::int, 'generation', ${generationId}::text, ${'생성 실패 환불'})`
-    } catch (refundErr) {
-      console.error('[CRITICAL] REFUND FAILED — 사용자 차감 후 환불 실패:', generationId, refundErr)
-      // TODO: 운영 알림(Sentry 등) 연동
-    }
-    try {
+      const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
       await prisma.generation.update({
         where: { id: generationId },
-        data: { status: 'FAILED', failed_reason: (e instanceof Error ? e.message : 'unknown').slice(0, 500), finished_at: new Date() },
-      })
-    } catch (updateErr) {
-      console.error('[createImageGeneration] FAILED 상태 업데이트 실패:', generationId, updateErr)
-    }
-    return { ok: false, code: 'ADAPTER', message: '생성에 실패했습니다. 차감 금액은 환불되었습니다.' }
-  }
-}
-
-// 영상 생성: 비동기. 견적(CHARGE) + PENDING 생성을 원자적으로 처리한 뒤,
-// 외부 작업을 등록(adapter.start)하고 RUNNING으로 전환한다. 등록 실패 시 전액 환불.
-// 완료/실패 확정은 폴링 cron(Task 3)이 담당한다 — 여기서는 저장/poll을 하지 않는다.
-export async function createVideoGeneration(input: VideoGenerateInput): Promise<CreateResult> {
-  const user = await requireUser()
-  if (user.role !== 'ADMIN') {
-    const ok = await checkDualLimit(user.id, 'video_gen', RATE_LIMITS.video_gen.perMin, RATE_LIMITS.video_gen.perHour)
-    if (!ok) return { ok: false, code: 'RATE_LIMIT', message: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.' }
-  }
-  const parsed = videoGenerateSchema.safeParse(input)
-  if (!parsed.success) return { ok: false, code: 'VALIDATION', message: '입력값을 확인해주세요.' }
-  const d = parsed.data
-
-  const model = await prisma.model.findUnique({ where: { id: d.modelId } })
-  if (!model || !model.is_active || model.kind !== 'VIDEO') {
-    return { ok: false, code: 'MODEL', message: '사용할 수 없는 영상 모델입니다.' }
-  }
-  const meta = toModelMeta(model)
-  const adapter = getVideoAdapter(model.id)
-  if (!adapter) return { ok: false, code: 'MODEL', message: '모델 어댑터가 없습니다.' }
-
-  const wallet = await prisma.wallet.findUnique({ where: { user_id: user.id } })
-  if (!wallet) return { ok: false, code: 'UNKNOWN', message: '지갑을 찾을 수 없습니다.' }
-
-  let billedUsd: number
-  try { billedUsd = estimateBilledUsd(meta, { prompt: d.prompt, duration_sec: d.duration_sec }) }
-  catch { return { ok: false, code: 'DURATION', message: '지원하지 않는 길이입니다.' } }
-
-  let fxRate: number
-  try { fxRate = await getCurrentFxRate() }
-  catch { return { ok: false, code: 'UNKNOWN', message: '환율 정보를 가져올 수 없습니다. 잠시 후 다시 시도해주세요.' } }
-  const krw = usdToKrw(billedUsd, fxRate)
-
-  // 1) Generation(PENDING) + hold 차감(CHARGE) 원자적
-  let generationId: string
-  try {
-    const created = await prisma.$transaction(async (tx) => {
-      const gen = await tx.generation.create({
         data: {
-          user_id: user.id, model_id: model.id, kind: 'VIDEO',
-          prompt: d.prompt, params_json: { duration_sec: d.duration_sec },
-          status: 'PENDING',
-          cost_usd_billed: billedUsd, margin_pct: meta.margin_pct, fx_rate: fxRate, charged_krw: krw,
+          status: 'SUCCEEDED', result_urls: paths, finished_at: new Date(),
+          expires_at: expiresAt, cost_usd_raw: result.cost_usd_raw,
+          result_meta_json: (result.meta ?? {}) as object,
         },
       })
-      await tx.$executeRaw`SELECT wallet_apply_tx(${wallet.id}::text, 'CHARGE', ${-krw}::int, 'generation', ${gen.id}::text, ${'영상 생성'})`
-      return gen
-    })
-    generationId = created.id
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e)
-    if (msg.includes('INSUFFICIENT_BALANCE')) {
-      return { ok: false, code: 'INSUFFICIENT', message: `잔액이 부족합니다. (필요: ₩${krw.toLocaleString('ko-KR')})` }
+      revalidatePath('/library')
+      return { ok: true, generationId }
+    } catch (e) {
+      console.error('[createGeneration] adapter/storage failed:', e)
+      try {
+        await prisma.$executeRaw`SELECT wallet_apply_tx(${wallet.id}::text, 'REFUND', ${krw}::int, 'generation', ${generationId}::text, ${'생성 실패 환불'})`
+      } catch (refundErr) {
+        console.error('[CRITICAL] REFUND FAILED — 사용자 차감 후 환불 실패:', generationId, refundErr)
+      }
+      try {
+        await prisma.generation.update({
+          where: { id: generationId },
+          data: { status: 'FAILED', failed_reason: (e instanceof Error ? e.message : 'unknown').slice(0, 500), finished_at: new Date() },
+        })
+      } catch (updateErr) {
+        console.error('[createGeneration] FAILED 상태 업데이트 실패:', generationId, updateErr)
+      }
+      return { ok: false, code: 'ADAPTER', message: '생성에 실패했습니다. 차감 금액은 환불되었습니다.' }
     }
-    console.error('[createVideoGeneration] charge tx failed:', e)
-    return { ok: false, code: 'UNKNOWN', message: '생성 요청 처리에 실패했습니다.' }
   }
 
-  // 2) 외부 작업 등록 + RUNNING 전이. 어느 단계든 실패하면 전액 환불 + FAILED.
+  // VIDEO: 외부 작업 등록 + RUNNING 전이. 어느 단계든 실패하면 전액 환불 + FAILED(고아 방지).
   try {
-    const { externalJobId } = await adapter.start({ prompt: d.prompt, duration_sec: d.duration_sec })
+    const { externalJobId } = await videoAdapter!.start(adapterParams)
     await prisma.generation.update({
       where: { id: generationId },
       data: { status: 'RUNNING', external_job_id: externalJobId, started_at: new Date() },
     })
   } catch (e) {
-    console.error('[createVideoGeneration] start/RUNNING-transition failed:', generationId, e)
+    console.error('[createGeneration] start/RUNNING-transition failed:', generationId, e)
     try {
       await prisma.$executeRaw`SELECT wallet_apply_tx(${wallet.id}::text, 'REFUND', ${krw}::int, 'generation', ${generationId}::text, ${'영상 등록 실패 환불'})`
     } catch (refundErr) { console.error('[CRITICAL] REFUND FAILED:', generationId, refundErr) }
@@ -247,10 +240,23 @@ export async function createVideoGeneration(input: VideoGenerateInput): Promise<
         where: { id: generationId, status: { in: ['PENDING', 'RUNNING'] } },
         data: { status: 'FAILED', failed_reason: (e instanceof Error ? e.message : 'start failed').slice(0, 500), finished_at: new Date() },
       })
-    } catch (uErr) { console.error('[createVideoGeneration] FAILED update err:', generationId, uErr) }
+    } catch (uErr) { console.error('[createGeneration] FAILED update err:', generationId, uErr) }
     return { ok: false, code: 'ADAPTER', message: '영상 작업 등록에 실패했습니다. 차감 금액은 환불되었습니다.' }
   }
 
   revalidatePath('/library')
   return { ok: true, generationId }
+}
+
+// ── 하위호환 래퍼 (Task 6에서 DynamicGenerator로 교체 전까지 기존 호출부 컴파일 유지) ──
+export async function createImageGeneration(
+  input: { modelId: string; prompt: string; count?: number },
+): Promise<CreateResult> {
+  return createGeneration(input.modelId, { prompt: input.prompt, count: input.count })
+}
+
+export async function createVideoGeneration(
+  input: { modelId: string; prompt: string; duration_sec: number },
+): Promise<CreateResult> {
+  return createGeneration(input.modelId, { prompt: input.prompt, duration_sec: input.duration_sec })
 }

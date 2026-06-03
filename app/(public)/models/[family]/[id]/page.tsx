@@ -4,19 +4,21 @@ import { getModelDetail } from '@/lib/actions/models'
 import { lowestBilledUsd } from '@/lib/models/catalog-pricing'
 import { MoneyText } from '@/components/common/MoneyText'
 
+export const dynamic = 'force-dynamic'
+
 export default async function ModelDetailPage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ family: string; id: string }>
 }) {
-  const { id } = await params
+  const { family, id } = await params
   const data = await getModelDetail(id)
   if (!data) notFound()
   const { model, fxRate } = data
   const lowUsd = lowestBilledUsd(model)
   return (
     <div className="max-w-3xl mx-auto px-4 py-8 space-y-4">
-      <Link href="/models" className="text-sm text-[var(--text-muted)]">
+      <Link href={`/models/${family}`} className="text-sm text-[var(--text-muted)]">
         ← 모델
       </Link>
       <div className="flex items-center justify-between">
