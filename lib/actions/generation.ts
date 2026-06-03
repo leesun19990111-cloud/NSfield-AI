@@ -3,7 +3,7 @@
 import { requireUser } from '@/lib/auth/guards'
 import { prisma } from '@/lib/db/prisma'
 import { getCurrentFxRate } from '@/lib/fx/service'
-import { estimateBilledUsd, UnsupportedDurationError } from '@/lib/models/pricing'
+import { estimateBilledUsd, estimateRawUsd, UnsupportedDurationError } from '@/lib/models/pricing'
 import { usdToKrw } from '@/lib/money/format'
 import { getImageAdapter, getVideoAdapter } from '@/lib/models/registry'
 import { uploadGenerationImages } from '@/lib/storage/upload'
@@ -25,8 +25,18 @@ function toModelMeta(m: {
   }
 }
 
+export type EstimateBreakdown = {
+  kind: 'per_image' | 'per_second' | 'per_token' | 'per_video_fixed'
+  unitUsd: number // base usd_per_unit (per_video_fixed: tier price)
+  units: number // count (image) or duration_sec (video); 1 if N/A
+  unitLabel: string // '장' | '초' | '건'
+  marginPct: number
+  baseUsd: number // unitUsd*units (pre-margin)
+  billedUsd: number // *(1+margin)
+}
+
 export type EstimateResult =
-  | { ok: true; billedUsd: number; krw: number; fxRate: number }
+  | { ok: true; billedUsd: number; krw: number; fxRate: number; breakdown: EstimateBreakdown }
   | { ok: false; message: string }
 
 export type EstimateInput = {
@@ -52,13 +62,16 @@ export async function estimateGeneration(input: EstimateInput): Promise<Estimate
   const durationVal = config.durationParam
     ? input[config.durationParam] ?? input.duration_sec
     : input.duration_sec
+  const params = {
+    prompt: String(input.prompt),
+    count: input.count,
+    duration_sec: durationVal !== undefined ? Number(durationVal) : undefined,
+  }
   let billedUsd: number
+  let baseUsd: number
   try {
-    billedUsd = estimateBilledUsd(meta, {
-      prompt: String(input.prompt),
-      count: input.count,
-      duration_sec: durationVal !== undefined ? Number(durationVal) : undefined,
-    })
+    baseUsd = estimateRawUsd(meta, params)
+    billedUsd = estimateBilledUsd(meta, params)
   } catch (e) {
     if (e instanceof UnsupportedDurationError) return { ok: false, message: '지원하지 않는 길이입니다.' }
     throw e
@@ -66,7 +79,36 @@ export async function estimateGeneration(input: EstimateInput): Promise<Estimate
   let fxRate: number
   try { fxRate = await getCurrentFxRate() }
   catch { return { ok: false, message: '환율 정보를 가져올 수 없습니다. 잠시 후 다시 시도해주세요.' } }
-  return { ok: true, billedUsd, krw: usdToKrw(billedUsd, fxRate), fxRate }
+  const breakdown = buildBreakdown(meta, params, baseUsd, billedUsd)
+  return { ok: true, billedUsd, krw: usdToKrw(billedUsd, fxRate), fxRate, breakdown }
+}
+
+// pricing_json + 결정된 params로 가격 분해(모델·단가·수량·마진)를 만든다.
+// baseUsd/billedUsd는 호출부가 이미 계산한 값을 넘겨받아 실제 차감과 동일한 반올림을 유지한다.
+function buildBreakdown(
+  meta: ModelMeta,
+  params: { prompt: string; count?: number; duration_sec?: number },
+  baseUsd: number,
+  billedUsd: number,
+): EstimateBreakdown {
+  const p = meta.pricing_json
+  const marginPct = meta.margin_pct
+  switch (p.kind) {
+    case 'per_image': {
+      const units = params.count ?? 1
+      return { kind: 'per_image', unitUsd: p.usd_per_unit, units, unitLabel: '장', marginPct, baseUsd, billedUsd }
+    }
+    case 'per_second': {
+      const units = params.duration_sec ?? 1
+      return { kind: 'per_second', unitUsd: p.usd_per_unit, units, unitLabel: '초', marginPct, baseUsd, billedUsd }
+    }
+    case 'per_token': {
+      return { kind: 'per_token', unitUsd: p.usd_per_unit, units: 1, unitLabel: '건', marginPct, baseUsd, billedUsd }
+    }
+    case 'per_video_fixed': {
+      return { kind: 'per_video_fixed', unitUsd: baseUsd, units: 1, unitLabel: '건', marginPct, baseUsd, billedUsd }
+    }
+  }
 }
 
 export type CreateResult =
