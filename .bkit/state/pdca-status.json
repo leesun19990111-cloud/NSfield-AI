@@ -1,6 +1,6 @@
 {
   "version": "3.0",
-  "lastUpdated": "2026-06-03T08:40:58.364Z",
+  "lastUpdated": "2026-06-03T08:53:01.929Z",
   "activeFeatures": [
     "NSfield",
     "unit",
@@ -24,7 +24,10 @@
     "prisma",
     "wallet",
     "validation",
-    "topup"
+    "topup",
+    "audit",
+    "topups",
+    "e2e"
   ],
   "primaryFeature": "NSfield",
   "features": {
@@ -37,9 +40,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-06-03T06:54:25.071Z",
-        "lastUpdated": "2026-06-03T08:26:12.333Z"
+        "lastUpdated": "2026-06-03T08:52:42.479Z"
       },
-      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\next.config.ts"
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\playwright.config.ts"
     },
     "unit": {
       "phase": "do",
@@ -89,9 +92,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-06-03T07:44:19.751Z",
-        "lastUpdated": "2026-06-03T08:01:13.292Z"
+        "lastUpdated": "2026-06-03T08:46:18.869Z"
       },
-      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\tests\\integration\\rls.test.ts"
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\tests\\integration\\apply_topup.test.ts"
     },
     "auth": {
       "phase": "do",
@@ -115,9 +118,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-06-03T08:04:46.848Z",
-        "lastUpdated": "2026-06-03T08:40:14.791Z"
+        "lastUpdated": "2026-06-03T08:47:02.549Z"
       },
-      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\lib\\actions\\topup.ts"
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\lib\\actions\\admin-topup.ts"
     },
     "callback": {
       "phase": "do",
@@ -219,9 +222,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-06-03T08:11:14.376Z",
-        "lastUpdated": "2026-06-03T08:11:14.377Z"
+        "lastUpdated": "2026-06-03T08:47:29.449Z"
       },
-      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\app\\admin\\layout.tsx"
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\components\\admin\\TopupQueue.tsx"
     },
     "money": {
       "phase": "do",
@@ -326,6 +329,45 @@
         "lastUpdated": "2026-06-03T08:40:58.362Z"
       },
       "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\app\\(app)\\wallet\\topup\\page.tsx"
+    },
+    "audit": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-06-03T08:46:34.983Z",
+        "lastUpdated": "2026-06-03T08:46:34.983Z"
+      },
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\lib\\audit\\record.ts"
+    },
+    "topups": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-06-03T08:47:35.152Z",
+        "lastUpdated": "2026-06-03T08:47:35.152Z"
+      },
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\app\\admin\\topups\\page.tsx"
+    },
+    "e2e": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-06-03T08:53:01.926Z",
+        "lastUpdated": "2026-06-03T08:53:01.926Z"
+      },
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\tests\\e2e\\topup-flow.spec.ts"
     }
   },
   "pipeline": {
@@ -336,7 +378,7 @@
   "session": {
     "startedAt": "2026-05-27T03:22:28.164Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-06-03T08:40:58.364Z"
+    "lastActivity": "2026-06-03T08:53:01.929Z"
   },
   "history": [
     {
@@ -738,6 +780,54 @@
     {
       "timestamp": "2026-06-03T08:40:58.364Z",
       "feature": "topup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:46:18.872Z",
+      "feature": "integration",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:46:34.985Z",
+      "feature": "audit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:46:52.006Z",
+      "feature": "actions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:47:02.553Z",
+      "feature": "actions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:47:29.452Z",
+      "feature": "admin",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:47:35.155Z",
+      "feature": "topups",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:52:42.483Z",
+      "feature": "NSfield",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:53:01.929Z",
+      "feature": "e2e",
       "phase": "do",
       "action": "updated"
     }
