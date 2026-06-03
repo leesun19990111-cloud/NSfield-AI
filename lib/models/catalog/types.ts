@@ -1,4 +1,4 @@
-export type Family = 'nanobanana' | 'seedream' | 'veo3.1' | 'seedance' | 'kling' | 'openai'
+export type Family = 'nanobanana' | 'seedream' | 'veo3.1' | 'seedance' | 'kling' | 'openai' | 'mock'
 
 export type Modality =
   | 'text-to-image'

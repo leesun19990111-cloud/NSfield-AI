@@ -5,6 +5,7 @@ export const FAMILY_LABEL: Record<string, string> = {
   seedance: 'Seedance',
   kling: 'Kling',
   openai: 'GPT Image',
+  mock: 'Mock',
 }
 
 export const MODALITY_LABEL: Record<string, string> = {

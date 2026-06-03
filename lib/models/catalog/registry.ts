@@ -339,6 +339,40 @@ export const MODEL_CONFIGS: ModelConfig[] = [
     advancedFields: i2vTemplateAdvanced,
     durationParam: 'duration',
   },
+
+  // ── Mock 모델 (비-production 테스트 전용, 카탈로그 기본 비활성) ─────────
+  {
+    id: 'mock-image',
+    atlasModel: '',
+    family: 'mock',
+    modality: 'text-to-image',
+    output: 'IMAGE',
+    displayName: 'Mock Image (테스트)',
+    provider: 'mock',
+    isActive: false,
+    pricing: { kind: 'per_image', usd_per_unit: 0.04 },
+    fields: [{ kind: 'prompt' }],
+  },
+  {
+    id: 'mock-video',
+    atlasModel: '',
+    family: 'mock',
+    modality: 'text-to-video',
+    output: 'VIDEO',
+    displayName: 'Mock Video (테스트)',
+    provider: 'mock',
+    isActive: false,
+    pricing: {
+      kind: 'per_video_fixed',
+      tiers: { '5': 0.45, '10': 0.82 },
+      options: { allowed_durations_sec: [5, 10], polling_interval_sec: 60 },
+    },
+    fields: [
+      { kind: 'prompt' },
+      { kind: 'int', param: 'duration', label: '길이(초)', options: [5, 10], default: 5 },
+    ],
+    durationParam: 'duration',
+  },
 ]
 
 export function getModelConfig(id: string): ModelConfig | undefined {

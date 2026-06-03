@@ -72,9 +72,9 @@ test('로그인 → 영상 생성(RUNNING) → 폴링 cron → SUCCEEDED + 차�
   await page.waitForURL('**/wallet', { timeout: 30000 })
 
   await page.goto('/generate/mock-video')
-  await page.getByPlaceholder('생성할 영상을 설명하세요').fill('파도치는 해변')
-  // 길이 5초 선택(기본이 첫 허용=5초이나 명시적으로 클릭) — 라벨이 고유
-  await page.getByRole('button', { name: '5초', exact: true }).click()
+  await page.getByRole('textbox').first().fill('파도치는 해변')
+  // 길이 5초 선택(기본이 첫 허용=5초이나 명시적으로 클릭) — IntField 버튼 라벨은 숫자
+  await page.getByRole('button', { name: '5', exact: true }).click()
   await page.getByRole('button', { name: /영상 생성하기/ }).click()
 
   // 등록 직후 RUNNING 상태로 라이브러리 상세로 이동
