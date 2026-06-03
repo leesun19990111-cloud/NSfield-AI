@@ -1,11 +1,12 @@
 {
   "version": "3.0",
-  "lastUpdated": "2026-06-03T07:10:52.965Z",
+  "lastUpdated": "2026-06-03T08:01:13.295Z",
   "activeFeatures": [
     "NSfield",
     "unit",
     "supabase",
-    "db"
+    "db",
+    "integration"
   ],
   "primaryFeature": "NSfield",
   "features": {
@@ -18,9 +19,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-06-03T06:54:25.071Z",
-        "lastUpdated": "2026-06-03T07:10:32.383Z"
+        "lastUpdated": "2026-06-03T07:43:49.569Z"
       },
-      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\prisma.config.ts"
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\vitest.integration.config.ts"
     },
     "unit": {
       "phase": "do",
@@ -60,6 +61,19 @@
         "lastUpdated": "2026-06-03T07:10:52.963Z"
       },
       "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\lib\\db\\prisma.ts"
+    },
+    "integration": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-06-03T07:44:19.751Z",
+        "lastUpdated": "2026-06-03T08:01:13.292Z"
+      },
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\tests\\integration\\rls.test.ts"
     }
   },
   "pipeline": {
@@ -70,7 +84,7 @@
   "session": {
     "startedAt": "2026-05-27T03:22:28.164Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-06-03T07:10:52.965Z"
+    "lastActivity": "2026-06-03T08:01:13.295Z"
   },
   "history": [
     {
@@ -136,6 +150,42 @@
     {
       "timestamp": "2026-06-03T07:10:52.965Z",
       "feature": "db",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T07:43:49.571Z",
+      "feature": "NSfield",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T07:44:19.753Z",
+      "feature": "integration",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T07:44:38.700Z",
+      "feature": "integration",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T07:55:10.273Z",
+      "feature": "integration",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:00:42.588Z",
+      "feature": "integration",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:01:13.294Z",
+      "feature": "integration",
       "phase": "do",
       "action": "updated"
     }
