@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:integration": "dotenv -e .env.local -- vitest run --config vitest.integration.config.ts",
     "postinstall": "prisma generate",
     "db:migrate": "dotenv -e .env.local -- prisma migrate dev",
     "db:seed": "dotenv -e .env.local -- tsx prisma/seed.ts"
@@ -27,6 +28,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/node": "^20",
+    "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6.0.2",
@@ -34,6 +36,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.7",
     "jsdom": "^29.1.1",
+    "pg": "^8.21.0",
     "prisma": "^6.19.3",
     "tailwindcss": "^4",
     "typescript": "^5",
