@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { FieldType } from '@/lib/models/catalog/types'
 import { estimateGeneration, createGeneration } from '@/lib/actions/generation'
+import type { EstimateBreakdown } from '@/lib/actions/generation'
 import { formatKrw, formatUsd } from '@/components/common/MoneyText'
 import { customForms } from './customForms'
 import { PromptField } from './fields/PromptField'
@@ -74,11 +75,13 @@ export function DynamicGenerator({ config, fxRate }: Props) {
   return <GenericForm config={config} fxRate={fxRate} />
 }
 
-function GenericForm({ config, fxRate }: Props) {
+function GenericForm({ config }: Props) {
   const router = useRouter()
   const allFields = [...config.fields, ...config.advancedFields]
   const [inputs, setInputs] = useState<Record<string, unknown>>(() => seedDefaults(allFields))
-  const [est, setEst] = useState<{ usd: number; krw: number } | null>(null)
+  const [est, setEst] = useState<
+    { billedUsd: number; krw: number; fxRate: number; breakdown: EstimateBreakdown } | null
+  >(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [advancedOpen, setAdvancedOpen] = useState(false)
@@ -102,7 +105,7 @@ function GenericForm({ config, fxRate }: Props) {
           : {}
       const res = await estimateGeneration({ modelId: config.id, prompt, ...durationExtra })
       if (res.ok) {
-        setEst({ usd: res.billedUsd, krw: res.krw })
+        setEst({ billedUsd: res.billedUsd, krw: res.krw, fxRate: res.fxRate, breakdown: res.breakdown })
         setError(null)
       } else {
         setEst(null)
@@ -253,16 +256,6 @@ function GenericForm({ config, fxRate }: Props) {
           </div>
         )}
 
-        {est && (
-          <div className="rounded-md bg-[var(--bg-surface)] border border-[var(--border)] p-3 text-sm text-[var(--text-primary)]">
-            예상 차감 <span className="font-mono">{formatUsd(est.usd)}</span> ≈{' '}
-            <span className="font-mono">{formatKrw(est.krw)}</span>
-            <div className="text-xs text-[var(--text-dim)] mt-1">
-              현재 환율 1USD={fxRate.toLocaleString('ko-KR')}₩ · 마진 포함
-            </div>
-          </div>
-        )}
-
         {error && <p className="text-[var(--danger)] text-sm">{error}</p>}
 
         <button
@@ -274,10 +267,24 @@ function GenericForm({ config, fxRate }: Props) {
             ? isVideo
               ? '작업 등록 중…'
               : '생성 중… (최대 30초)'
-            : isVideo
-              ? '✨ 영상 생성하기'
+            : est
+              ? `✨ 생성하기 — ${formatKrw(est.krw)}`
               : '✨ 생성하기'}
         </button>
+
+        {est && (
+          <div className="space-y-0.5 text-xs text-[var(--text-dim)]">
+            <p>
+              {config.displayName} · {formatUsd(est.breakdown.unitUsd)}/{est.breakdown.unitLabel} ×{' '}
+              {est.breakdown.units}
+              {est.breakdown.unitLabel} + 마진 {est.breakdown.marginPct}% ={' '}
+              {formatUsd(est.breakdown.billedUsd)} ≈ {formatKrw(est.krw)}
+            </p>
+            <p>
+              현재 환율 1USD = {est.fxRate.toLocaleString('ko-KR')}₩ · 생성 후 차감됩니다
+            </p>
+          </div>
+        )}
 
         {isVideo && (
           <p className="text-xs text-[var(--text-dim)]">
