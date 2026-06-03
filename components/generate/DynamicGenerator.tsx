@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import type { FieldType } from '@/lib/models/catalog/types'
 import { estimateGeneration, createGeneration } from '@/lib/actions/generation'
 import type { EstimateBreakdown } from '@/lib/actions/generation'
-import { formatKrw, formatUsd } from '@/components/common/MoneyText'
+import { formatKrw, formatUsdPrecise } from '@/components/common/MoneyText'
 import { customForms } from './customForms'
 import { PromptField } from './fields/PromptField'
 import { NegativePromptField } from './fields/NegativePromptField'
@@ -275,10 +275,10 @@ function GenericForm({ config }: Props) {
         {est && (
           <div className="space-y-0.5 text-xs text-[var(--text-dim)]">
             <p>
-              {config.displayName} · {formatUsd(est.breakdown.unitUsd)}/{est.breakdown.unitLabel} ×{' '}
+              {config.displayName} · {formatUsdPrecise(est.breakdown.unitUsd)}/{est.breakdown.unitLabel} ×{' '}
               {est.breakdown.units}
               {est.breakdown.unitLabel} + 마진 {est.breakdown.marginPct}% ={' '}
-              {formatUsd(est.breakdown.billedUsd)} ≈ {formatKrw(est.krw)}
+              {formatUsdPrecise(est.breakdown.billedUsd)} ≈ {formatKrw(est.krw)}
             </p>
             <p>
               현재 환율 1USD = {est.fxRate.toLocaleString('ko-KR')}₩ · 생성 후 차감됩니다

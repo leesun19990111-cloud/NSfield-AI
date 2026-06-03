@@ -3,8 +3,9 @@
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { updateModel } from '@/lib/actions/admin-models'
-import { estimateBilledUsd } from '@/lib/models/pricing'
-import { formatUsd, formatKrw } from '@/components/common/MoneyText'
+import { estimateRawUsd, estimateBilledUsd } from '@/lib/models/pricing'
+import { formatUsdPrecise, formatKrw } from '@/components/common/MoneyText'
+import { usdToKrw } from '@/lib/money/format'
 import type { ModelMeta, PricingJson } from '@/lib/models/types'
 
 type EditorModel = {
@@ -17,7 +18,7 @@ type EditorModel = {
   pricing_json: unknown
 }
 
-type SimRow = { label: string; usd: number }
+type SimRow = { label: string; baseUsd: number; billedUsd: number }
 
 function buildSimRows(
   meta: ModelMeta,
@@ -25,21 +26,51 @@ function buildSimRows(
   const p = meta.pricing_json
   try {
     if (p.kind === 'per_image') {
-      return { rows: [{ label: '이미지 1장', usd: estimateBilledUsd(meta, { prompt: 'x', count: 1 }) }], error: null }
+      const params = { prompt: 'x', count: 1 }
+      return {
+        rows: [
+          {
+            label: '이미지 1장',
+            baseUsd: estimateRawUsd(meta, params),
+            billedUsd: estimateBilledUsd(meta, params),
+          },
+        ],
+        error: null,
+      }
     }
     if (p.kind === 'per_token') {
-      return { rows: [{ label: '토큰 1개', usd: estimateBilledUsd(meta, { prompt: 'x', tokens: 1 }) }], error: null }
+      const params = { prompt: 'x', tokens: 1 }
+      return {
+        rows: [
+          {
+            label: '토큰 1개',
+            baseUsd: estimateRawUsd(meta, params),
+            billedUsd: estimateBilledUsd(meta, params),
+          },
+        ],
+        error: null,
+      }
     }
     // per_second / per_video_fixed: one row per allowed duration
     const durations = p.options.allowed_durations_sec
-    const rows = durations.map((d) => ({
-      label: `${d}초`,
-      usd: estimateBilledUsd(meta, { prompt: 'x', duration_sec: d }),
-    }))
+    const rows = durations.map((d) => {
+      const params = { prompt: 'x', duration_sec: d }
+      return {
+        label: `${d}초`,
+        baseUsd: estimateRawUsd(meta, params),
+        billedUsd: estimateBilledUsd(meta, params),
+      }
+    })
     return { rows, error: null }
   } catch {
     return { rows: [], error: '가격 규칙으로 청구액을 계산할 수 없습니다.' }
   }
+}
+
+// JSON 파싱 없이 기본 단가를 한눈에 보여주기 위한 힌트 (per_video_fixed는 tiers라 단가 없음)
+function detectBaseRate(p: PricingJson): { kind: string; usdPerUnit: number | null } {
+  if (p.kind === 'per_video_fixed') return { kind: p.kind, usdPerUnit: null }
+  return { kind: p.kind, usdPerUnit: p.usd_per_unit }
 }
 
 export function ModelEditor({ model, fxRate }: { model: EditorModel; fxRate: number }) {
@@ -77,6 +108,17 @@ export function ModelEditor({ model, fxRate }: { model: EditorModel; fxRate: num
     }
     return buildSimRows(meta)
   }, [pricingText, marginPct, model.id, model.kind, model.provider, displayName, isActive])
+
+  // JSON 파싱 없이 기본 단가(kind + usd_per_unit) 힌트
+  const baseRate = useMemo(() => {
+    try {
+      return detectBaseRate(JSON.parse(pricingText) as PricingJson)
+    } catch {
+      return null
+    }
+  }, [pricingText])
+
+  const marginNum = Number(marginPct) || 0
 
   async function onSave() {
     setError(null)
@@ -141,6 +183,14 @@ export function ModelEditor({ model, fxRate }: { model: EditorModel; fxRate: num
 
         <div className="space-y-1.5">
           <label className="text-sm text-[var(--text-muted)]">가격 규칙 (JSON)</label>
+          {baseRate && (
+            <p className="text-xs text-[var(--text-dim)] font-mono">
+              kind: {baseRate.kind}
+              {baseRate.usdPerUnit !== null
+                ? ` · usd_per_unit ${formatUsdPrecise(baseRate.usdPerUnit)}`
+                : ' · tiers (구간별 고정가)'}
+            </p>
+          )}
           <textarea
             value={pricingText}
             onChange={(e) => setPricingText(e.target.value)}
@@ -166,8 +216,9 @@ export function ModelEditor({ model, fxRate }: { model: EditorModel; fxRate: num
         <div className="text-sm font-semibold text-[var(--text-muted)]">
           가격 시뮬레이터
         </div>
-        <div className="text-xs text-[var(--text-dim)]">
-          환율 1 USD ≈ {formatKrw(fxRate)} · 마진 {marginPct || 0}% 적용 후 청구액
+        <div className="text-xs text-[var(--text-dim)] space-y-0.5">
+          <p>사용자 청구가 = AtlasCloud 원가 × (1 + 마진%). 아래는 Generate 버튼에 표기될 값과 동일합니다.</p>
+          <p>마진 {marginNum}% · 환율 1 USD ≈ {formatKrw(fxRate)}</p>
         </div>
         {sim.error ? (
           <p className="text-sm text-[var(--danger)]">{sim.error}</p>
@@ -178,18 +229,23 @@ export function ModelEditor({ model, fxRate }: { model: EditorModel; fxRate: num
             <thead className="text-[var(--text-muted)] text-left">
               <tr className="border-b border-[var(--border)]">
                 <th className="py-1.5">단위</th>
-                <th className="text-right">청구액</th>
+                <th className="text-right">원가</th>
+                <th className="text-right">사용자가</th>
+                <th className="text-right">≈ ₩</th>
               </tr>
             </thead>
             <tbody>
               {sim.rows.map((r) => (
                 <tr key={r.label} className="border-b border-[var(--border)]">
                   <td className="py-1.5">{r.label}</td>
+                  <td className="text-right font-mono text-[var(--text-dim)]">
+                    {formatUsdPrecise(r.baseUsd)}
+                  </td>
                   <td className="text-right font-mono">
-                    {formatUsd(r.usd)}
-                    <span className="text-[var(--text-dim)] text-xs ml-1">
-                      ≈ {formatKrw(r.usd * fxRate)}
-                    </span>
+                    {formatUsdPrecise(r.billedUsd)}
+                  </td>
+                  <td className="text-right font-mono text-[var(--text-dim)]">
+                    {formatKrw(usdToKrw(r.billedUsd, fxRate))}
                   </td>
                 </tr>
               ))}
