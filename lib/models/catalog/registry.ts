@@ -51,10 +51,27 @@ const seedance2I2vAdvanced: FieldType[] = [
   { kind: 'toggle', param: 'return_last_frame', label: '마지막 프레임 반환', default: false },
 ]
 
-// ── 모달리티별 best-guess 템플릿 (비활성 모델 재사용) ────────────────────
+// nano-banana Pro t2i (문서 확정): nano-2와 달리 thinking_level/image_search 없음, aspect_ratio 10종
+const nanobananaProT2iFields: FieldType[] = [
+  { kind: 'prompt' },
+  { kind: 'select', param: 'aspect_ratio', label: '화면 비율', options: opts(['1:1', '3:2', '2:3', '3:4', '4:3', '4:5', '5:4', '9:16', '16:9', '21:9']), default: '1:1' },
+  { kind: 'select', param: 'resolution', label: '해상도', options: opts(['1k', '2k', '4k']), default: '1k' },
+]
+const nanobananaProT2iAdvanced: FieldType[] = [
+  { kind: 'toggle', param: 'enable_web_search', label: '웹 검색 사용', default: false },
+]
 
-const t2iTemplate: FieldType[] = nanobanana2T2iFields
-const t2iTemplateAdvanced: FieldType[] = nanobanana2T2iAdvanced
+// Seedream t2i (문서 확정): aspect_ratio/resolution 대신 size(WIDTH*HEIGHT) 단일 파라미터
+const SEEDREAM_SIZES = [
+  '2048*2048', '2304*1728', '1728*2304', '2848*1600', '1600*2848', '2496*1664', '1664*2496', '3136*1344',
+  '4096*4096', '4704*3520', '3520*4704', '5504*3040', '3040*5504', '4992*3328', '3328*4992', '6240*2656',
+]
+const seedreamT2iFields: FieldType[] = [
+  { kind: 'prompt' },
+  { kind: 'select', param: 'size', label: '크기', options: SEEDREAM_SIZES.map((s) => ({ value: s, label: s.replace('*', '×') })), default: '2048*2048' },
+]
+
+// ── 모달리티별 best-guess 템플릿 (비활성 모델 재사용) ────────────────────
 
 const t2vTemplate: FieldType[] = veo31T2vFields
 const t2vTemplateAdvanced: FieldType[] = veo31T2vAdvanced
@@ -168,36 +185,35 @@ export const MODEL_CONFIGS: ModelConfig[] = [
     output: 'IMAGE',
     displayName: 'Nano Banana Pro (텍스트→이미지)',
     provider: 'google',
-    isActive: false,
+    isActive: true,
     pricing: { kind: 'per_image', usd_per_unit: 0.05 },
-    fields: t2iTemplate,
-    advancedFields: t2iTemplateAdvanced,
+    fields: nanobananaProT2iFields,
+    advancedFields: nanobananaProT2iAdvanced,
   },
   {
+    // atlasModel은 v4.5 문서 패턴(`bytedance/seedream-v4.5`, 모달리티 접미사 없음)에서 추론. 콘솔에서 다르면 owner 정정.
     id: 'seedream-v4-t2i',
-    atlasModel: 'bytedance/seedream-v4/text-to-image',
+    atlasModel: 'bytedance/seedream-v4',
     family: 'seedream',
     modality: 'text-to-image',
     output: 'IMAGE',
     displayName: 'Seedream v4 (텍스트→이미지)',
     provider: 'bytedance',
-    isActive: false,
+    isActive: true,
     pricing: { kind: 'per_image', usd_per_unit: 0.03 },
-    fields: t2iTemplate,
-    advancedFields: t2iTemplateAdvanced,
+    fields: seedreamT2iFields,
   },
   {
     id: 'seedream-v4.5-t2i',
-    atlasModel: 'bytedance/seedream-v4.5/text-to-image',
+    atlasModel: 'bytedance/seedream-v4.5',
     family: 'seedream',
     modality: 'text-to-image',
     output: 'IMAGE',
     displayName: 'Seedream v4.5 (텍스트→이미지)',
     provider: 'bytedance',
-    isActive: false,
+    isActive: true,
     pricing: { kind: 'per_image', usd_per_unit: 0.035 },
-    fields: t2iTemplate,
-    advancedFields: t2iTemplateAdvanced,
+    fields: seedreamT2iFields,
   },
   {
     id: 'veo3.1-fast-t2v',

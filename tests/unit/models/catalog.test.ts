@@ -56,13 +56,25 @@ describe('catalog registry', () => {
     expect(getModelConfig('does-not-exist')).toBeUndefined()
   })
 
-  it('listConfigs는 전체, listActiveConfigs는 활성 5종을 반환', () => {
+  it('listConfigs는 전체, listActiveConfigs는 활성 모델만 반환', () => {
     expect(listConfigs().length).toBe(MODEL_CONFIGS.length)
     const active = listActiveConfigs()
-    expect(active.length).toBe(5)
     const ids = active.map((c) => c.id).sort()
     expect(ids).toEqual(
-      ['gpt-image-2.0', 'nanobanana-2-ref2i', 'nanobanana-2-t2i', 'seedance-2-i2v', 'veo3.1-t2v'].sort(),
+      [
+        'gpt-image-2.0',
+        'nanobanana-2-ref2i',
+        'nanobanana-2-t2i',
+        'nanobanana-pro-t2i',
+        'seedance-2-i2v',
+        'seedream-v4-t2i',
+        'seedream-v4.5-t2i',
+        'veo3.1-t2v',
+      ].sort(),
     )
+    // 모든 활성 config는 비어있지 않은 atlasModel (gpt-image=OpenAI 예외)
+    for (const c of active) {
+      if (c.id !== 'gpt-image-2.0') expect(c.atlasModel.length).toBeGreaterThan(0)
+    }
   })
 })
