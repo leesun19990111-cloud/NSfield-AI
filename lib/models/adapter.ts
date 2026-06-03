@@ -23,3 +23,16 @@ export class AdapterError extends Error {
     super(message ?? code)
   }
 }
+
+export type VideoStartResult = { externalJobId: string; cost_usd_raw_estimate?: number }
+export type VideoPollResult =
+  | { status: 'running' }
+  | { status: 'succeeded'; videoUrl: string; cost_usd_raw: number; meta?: Record<string, unknown> }
+  | { status: 'failed'; reason: string }
+
+export interface VideoAdapter {
+  id: string
+  kind: 'VIDEO'
+  start(params: GenerationParams): Promise<VideoStartResult>
+  poll(externalJobId: string): Promise<VideoPollResult>
+}

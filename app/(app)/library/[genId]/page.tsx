@@ -1,7 +1,9 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getMyGeneration } from '@/lib/actions/library'
+import { getSessionUser } from '@/lib/auth/session'
 import { ResultViewer } from '@/components/library/ResultViewer'
+import { GenerationLiveStatus } from '@/components/library/GenerationLiveStatus'
 import { MoneyText } from '@/components/common/MoneyText'
 
 export default async function GenerationDetailPage({ params }: { params: Promise<{ genId: string }> }) {
@@ -9,8 +11,10 @@ export default async function GenerationDetailPage({ params }: { params: Promise
   const data = await getMyGeneration(genId)
   if (!data) notFound()
   const { gen, signedUrls } = data
+  const user = await getSessionUser()
   return (
     <div className="space-y-4">
+      {user && <GenerationLiveStatus userId={user.id} />}
       <Link href="/library" className="text-sm text-[var(--text-muted)]">← 라이브러리</Link>
       <div className="grid md:grid-cols-2 gap-6">
         <ResultViewer urls={signedUrls} status={gen.status} />
