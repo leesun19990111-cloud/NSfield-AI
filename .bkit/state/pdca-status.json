@@ -1,6 +1,6 @@
 {
   "version": "3.0",
-  "lastUpdated": "2026-06-03T08:16:25.542Z",
+  "lastUpdated": "2026-06-03T08:40:58.364Z",
   "activeFeatures": [
     "NSfield",
     "unit",
@@ -17,7 +17,14 @@
     "layout",
     "(app)",
     "admin",
-    "money"
+    "money",
+    "http",
+    "fx",
+    "fx-update",
+    "prisma",
+    "wallet",
+    "validation",
+    "topup"
   ],
   "primaryFeature": "NSfield",
   "features": {
@@ -30,9 +37,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-06-03T06:54:25.071Z",
-        "lastUpdated": "2026-06-03T08:16:25.539Z"
+        "lastUpdated": "2026-06-03T08:26:12.333Z"
       },
-      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\lib\\models\\pricing.ts"
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\next.config.ts"
     },
     "unit": {
       "phase": "do",
@@ -69,7 +76,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-06-03T07:10:52.963Z",
-        "lastUpdated": "2026-06-03T07:10:52.963Z"
+        "lastUpdated": "2026-06-03T08:27:34.570Z"
       },
       "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\lib\\db\\prisma.ts"
     },
@@ -108,9 +115,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-06-03T08:04:46.848Z",
-        "lastUpdated": "2026-06-03T08:04:46.848Z"
+        "lastUpdated": "2026-06-03T08:40:14.791Z"
       },
-      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\lib\\actions\\auth.ts"
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\lib\\actions\\topup.ts"
     },
     "callback": {
       "phase": "do",
@@ -228,6 +235,97 @@
         "lastUpdated": "2026-06-03T08:14:57.362Z"
       },
       "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\lib\\money\\format.ts"
+    },
+    "http": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-06-03T08:19:21.191Z",
+        "lastUpdated": "2026-06-03T08:19:21.191Z"
+      },
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\lib\\http\\fetch.ts"
+    },
+    "fx": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-06-03T08:19:24.003Z",
+        "lastUpdated": "2026-06-03T08:19:50.557Z"
+      },
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\lib\\fx\\service.ts"
+    },
+    "fx-update": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-06-03T08:19:52.668Z",
+        "lastUpdated": "2026-06-03T08:24:24.483Z"
+      },
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\app\\api\\cron\\fx-update\\route.ts"
+    },
+    "prisma": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-06-03T08:32:16.569Z",
+        "lastUpdated": "2026-06-03T08:32:43.543Z"
+      },
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\prisma\\_check.ts"
+    },
+    "wallet": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-06-03T08:36:07.432Z",
+        "lastUpdated": "2026-06-03T08:40:51.860Z"
+      },
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\components\\wallet\\MyTopupList.tsx"
+    },
+    "validation": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-06-03T08:39:48.153Z",
+        "lastUpdated": "2026-06-03T08:40:10.693Z"
+      },
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\lib\\validation\\topup.ts"
+    },
+    "topup": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-06-03T08:40:58.362Z",
+        "lastUpdated": "2026-06-03T08:40:58.362Z"
+      },
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\app\\(app)\\wallet\\topup\\page.tsx"
     }
   },
   "pipeline": {
@@ -238,7 +336,7 @@
   "session": {
     "startedAt": "2026-05-27T03:22:28.164Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-06-03T08:16:25.542Z"
+    "lastActivity": "2026-06-03T08:40:58.364Z"
   },
   "history": [
     {
@@ -484,6 +582,162 @@
     {
       "timestamp": "2026-06-03T08:16:25.542Z",
       "feature": "NSfield",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:19:21.195Z",
+      "feature": "http",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:19:24.005Z",
+      "feature": "fx",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:19:30.725Z",
+      "feature": "fx",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:19:50.559Z",
+      "feature": "fx",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:19:52.672Z",
+      "feature": "fx-update",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:22:08.729Z",
+      "feature": "NSfield",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:22:55.291Z",
+      "feature": "NSfield",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:24:00.040Z",
+      "feature": "fx-update",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:24:24.485Z",
+      "feature": "fx-update",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:26:04.904Z",
+      "feature": "NSfield",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:26:12.335Z",
+      "feature": "NSfield",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:27:34.573Z",
+      "feature": "db",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:32:16.572Z",
+      "feature": "prisma",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:32:43.546Z",
+      "feature": "prisma",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:35:44.953Z",
+      "feature": "actions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:36:03.213Z",
+      "feature": "actions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:36:07.434Z",
+      "feature": "wallet",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:36:13.584Z",
+      "feature": "wallet",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:36:17.009Z",
+      "feature": "wallet",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:39:48.156Z",
+      "feature": "validation",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:39:54.153Z",
+      "feature": "actions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:40:10.696Z",
+      "feature": "validation",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:40:14.793Z",
+      "feature": "actions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:40:47.243Z",
+      "feature": "wallet",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:40:51.863Z",
+      "feature": "wallet",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T08:40:58.364Z",
+      "feature": "topup",
       "phase": "do",
       "action": "updated"
     }
