@@ -1,0 +1,178 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  display_name  String?
+  role          Role     @default(USER)
+  topup_code    String   @unique
+  created_at    DateTime @default(now())
+
+  wallet         Wallet?
+  generations    Generation[]
+  topup_requests TopupRequest[]
+
+  @@map("users")
+}
+
+model Wallet {
+  id           String   @id @default(uuid())
+  user_id      String   @unique
+  balance_krw  Int      @default(0)
+  updated_at   DateTime @updatedAt
+
+  user         User @relation(fields: [user_id], references: [id])
+  transactions WalletTransaction[]
+
+  @@map("wallets")
+}
+
+model WalletTransaction {
+  id            String   @id @default(uuid())
+  wallet_id     String
+  type          TxType
+  amount_krw    Int
+  balance_after Int
+  ref_type      String?
+  ref_id        String?
+  memo          String?
+  created_at    DateTime @default(now())
+
+  wallet        Wallet @relation(fields: [wallet_id], references: [id])
+
+  @@index([wallet_id, created_at(sort: Desc)])
+  @@map("wallet_transactions")
+}
+
+model TopupRequest {
+  id              String      @id @default(uuid())
+  user_id         String
+  amount_krw      Int
+  depositor_name  String
+  transferred_at  DateTime
+  note            String?
+  status          TopupStatus @default(PENDING)
+  reviewed_by     String?
+  reviewed_at     DateTime?
+  reject_reason   String?
+  created_at      DateTime    @default(now())
+
+  user            User @relation(fields: [user_id], references: [id])
+
+  @@index([status, created_at])
+  @@map("topup_requests")
+}
+
+model Model {
+  id            String    @id
+  kind          ModelKind
+  display_name  String
+  provider      String
+  is_active     Boolean   @default(true)
+  margin_pct    Decimal   @default(10)
+  pricing_json  Json
+
+  @@map("models")
+}
+
+model Generation {
+  id              String    @id @default(uuid())
+  user_id         String
+  model_id        String
+  kind            ModelKind
+  prompt          String
+  input_image_url String?
+  params_json     Json
+
+  status          GenStatus @default(PENDING)
+  external_job_id String?
+  last_polled_at  DateTime?
+
+  result_urls       String[]
+  result_meta_json  Json?
+
+  cost_usd_raw    Decimal?
+  cost_usd_billed Decimal?
+  margin_pct      Decimal?
+  fx_rate         Decimal?
+  charged_krw     Int?
+
+  created_at    DateTime  @default(now())
+  started_at    DateTime?
+  finished_at   DateTime?
+  expires_at    DateTime?
+  failed_reason String?
+
+  user          User @relation(fields: [user_id], references: [id])
+
+  @@index([user_id, created_at(sort: Desc)])
+  @@index([status, kind, last_polled_at])
+  @@index([expires_at])
+  @@map("generations")
+}
+
+model FxRate {
+  id         String   @id @default(uuid())
+  pair       String
+  rate       Decimal
+  source     String
+  fetched_at DateTime @default(now())
+
+  @@index([pair, fetched_at(sort: Desc)])
+  @@map("fx_rates")
+}
+
+model AdminAction {
+  id          String   @id @default(uuid())
+  admin_id    String
+  action      String
+  target_type String?
+  target_id   String?
+  before_json Json?
+  after_json  Json?
+  reason      String?
+  created_at  DateTime @default(now())
+
+  @@index([admin_id, created_at(sort: Desc)])
+  @@map("admin_actions")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ModelKind {
+  IMAGE
+  VIDEO
+}
+
+enum TxType {
+  TOPUP
+  CHARGE
+  REFUND
+  ADJUSTMENT
+}
+
+enum TopupStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum GenStatus {
+  PENDING
+  RUNNING
+  SUCCEEDED
+  FAILED
+  CANCELED
+}
