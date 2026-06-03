@@ -2,7 +2,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 vi.mock('@/lib/auth/guards', () => ({ requireUser: vi.fn() }))
 vi.mock('@/lib/db/prisma', () => ({
-  prisma: { topupRequest: { create: vi.fn(), findMany: vi.fn() } },
+  prisma: {
+    topupRequest: { create: vi.fn(), findMany: vi.fn() },
+    // rate limit 통과(true) 기본값
+    $queryRaw: vi.fn().mockResolvedValue([{ rate_limit_consume: true }]),
+  },
 }))
 vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }))
 

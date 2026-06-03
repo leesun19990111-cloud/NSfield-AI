@@ -20,6 +20,7 @@ const pg = new Client({ connectionString: process.env.DIRECT_URL })
 
 beforeAll(async () => {
   await pg.connect()
+  await pg.query(`delete from rate_limits where user_id=$1`, [uId])
   await pg.query(`insert into users(id,email,topup_code,role) values ($1,$2,'GENU','USER') on conflict (id) do nothing`,
     [uId, `gen_${Date.now()}@x.com`])
   await pg.query(`insert into wallets(id,user_id,balance_krw,updated_at) values ($1,$2,100000,now()) on conflict (id) do nothing`, [wId, uId])
@@ -36,6 +37,7 @@ afterAll(async () => {
   const gens = await pg.query(`select result_urls from generations where user_id=$1`, [uId])
   const paths = gens.rows.flatMap((r: { result_urls: string[] }) => r.result_urls ?? [])
   if (paths.length) await deleteGenerationObjects(paths)
+  await pg.query(`delete from rate_limits where user_id=$1`, [uId])
   await pg.query(`delete from wallet_transactions where wallet_id=$1`, [wId])
   await pg.query(`delete from generations where user_id=$1`, [uId])
   await pg.query(`delete from wallets where id=$1`, [wId])

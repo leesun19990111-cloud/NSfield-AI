@@ -8,6 +8,7 @@ import { usdToKrw } from '@/lib/money/format'
 import { getImageAdapter, getVideoAdapter } from '@/lib/models/registry'
 import { uploadGenerationImages } from '@/lib/storage/upload'
 import { computeSettlementKrw } from '@/lib/generation/settle'
+import { checkDualLimit, RATE_LIMITS } from '@/lib/rate-limit/token-bucket'
 import {
   imageGenerateSchema, type ImageGenerateInput,
   videoGenerateSchema, type VideoGenerateInput,
@@ -60,10 +61,14 @@ export async function estimateGeneration(input: EstimateInput): Promise<Estimate
 
 export type CreateResult =
   | { ok: true; generationId: string }
-  | { ok: false; code: 'VALIDATION' | 'MODEL' | 'INSUFFICIENT' | 'ADAPTER' | 'DURATION' | 'UNKNOWN'; message: string }
+  | { ok: false; code: 'VALIDATION' | 'MODEL' | 'INSUFFICIENT' | 'ADAPTER' | 'DURATION' | 'RATE_LIMIT' | 'UNKNOWN'; message: string }
 
 export async function createImageGeneration(input: ImageGenerateInput): Promise<CreateResult> {
   const user = await requireUser()
+  if (user.role !== 'ADMIN') {
+    const ok = await checkDualLimit(user.id, 'image_gen', RATE_LIMITS.image_gen.perMin, RATE_LIMITS.image_gen.perHour)
+    if (!ok) return { ok: false, code: 'RATE_LIMIT', message: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.' }
+  }
   const parsed = imageGenerateSchema.safeParse(input)
   if (!parsed.success) return { ok: false, code: 'VALIDATION', message: '입력값을 확인해주세요.' }
   const d = parsed.data
@@ -172,6 +177,10 @@ export async function createImageGeneration(input: ImageGenerateInput): Promise<
 // 완료/실패 확정은 폴링 cron(Task 3)이 담당한다 — 여기서는 저장/poll을 하지 않는다.
 export async function createVideoGeneration(input: VideoGenerateInput): Promise<CreateResult> {
   const user = await requireUser()
+  if (user.role !== 'ADMIN') {
+    const ok = await checkDualLimit(user.id, 'video_gen', RATE_LIMITS.video_gen.perMin, RATE_LIMITS.video_gen.perHour)
+    if (!ok) return { ok: false, code: 'RATE_LIMIT', message: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.' }
+  }
   const parsed = videoGenerateSchema.safeParse(input)
   if (!parsed.success) return { ok: false, code: 'VALIDATION', message: '입력값을 확인해주세요.' }
   const d = parsed.data
