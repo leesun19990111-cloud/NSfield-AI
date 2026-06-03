@@ -79,6 +79,7 @@ describe('catalog registry', () => {
         'kling-v3-pro-t2v',
         'kling-v3-std-i2v',
         'kling-v3-pro-i2v',
+        'veo3.1-ref2v',
       ].sort(),
     )
     // 모든 활성 config는 비어있지 않은 atlasModel (gpt-image=OpenAI 예외)

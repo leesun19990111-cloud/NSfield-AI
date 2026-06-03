@@ -132,22 +132,18 @@ const seedanceT2vFields: FieldType[] = [
   { kind: 'toggle', param: 'generate_audio', label: '오디오 생성', default: true },
 ]
 
-// ── 모달리티별 best-guess 템플릿 (비활성 모델 재사용) ────────────────────
-
-const ref2vTemplate: FieldType[] = [
+// Veo3.1 ref2v (문서 확정). 참조 입력 param은 `images`(1~3장), duration 8초 고정.
+const veo31Ref2vFields: FieldType[] = [
   { kind: 'prompt' },
-  { kind: 'images', param: 'images', label: '참조 이미지', max: 10 },
-  { kind: 'select', param: 'aspect_ratio', label: '화면 비율', options: opts(['16:9', '9:16']), default: '16:9' },
-  { kind: 'int', param: 'duration', label: '길이(초)', options: [4, 6, 8], default: 8 },
-  { kind: 'select', param: 'resolution', label: '해상도', options: opts(['720p', '1080p']), default: '720p' },
+  { kind: 'images', param: 'images', label: '참조 이미지(1~3장)', max: 3 },
+  { kind: 'int', param: 'duration', label: '길이(초)', options: [8], default: 8 },
+  { kind: 'select', param: 'resolution', label: '해상도', options: opts(['720p', '1080p', '4k']), default: '720p' },
+  { kind: 'toggle', param: 'generate_audio', label: '오디오 생성', default: true },
 ]
-
-// best-guess 영상 가격 placeholder
-const guessVideoPricing = (tiers: Record<string, number>, durations: number[]): Record<string, unknown> => ({
-  kind: 'per_video_fixed',
-  tiers,
-  options: { allowed_durations_sec: durations, polling_interval_sec: 60 },
-})
+const veo31Ref2vAdvanced: FieldType[] = [
+  { kind: 'negative_prompt' },
+  { kind: 'int', param: 'seed', label: 'Seed' },
+]
 
 export const MODEL_CONFIGS: ModelConfig[] = [
   // ── 활성 4종 (AtlasCloud 문서 확보) ──────────────────────────────────
@@ -320,10 +316,10 @@ export const MODEL_CONFIGS: ModelConfig[] = [
     output: 'VIDEO',
     displayName: 'Veo 3.1 (참조→영상)',
     provider: 'google',
-    isActive: false,
-    pricing: guessVideoPricing({ '4': 0.4, '6': 0.6, '8': 0.8 }, [4, 6, 8]),
-    fields: ref2vTemplate,
-    advancedFields: veo31T2vAdvanced,
+    isActive: true,
+    pricing: { kind: 'per_second', usd_per_unit: 0.1, options: { allowed_durations_sec: [8], polling_interval_sec: 60 } },
+    fields: veo31Ref2vFields,
+    advancedFields: veo31Ref2vAdvanced,
     durationParam: 'duration',
   },
   {
