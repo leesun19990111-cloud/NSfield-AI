@@ -71,13 +71,68 @@ const seedreamT2iFields: FieldType[] = [
   { kind: 'select', param: 'size', label: '크기', options: SEEDREAM_SIZES.map((s) => ({ value: s, label: s.replace('*', '×') })), default: '2048*2048' },
 ]
 
+// ── 신규 활성 모델 fields (API 문서 기준) ──────────────────────────────
+
+// Kling t2v (kwaivgi 문서 확정). cfg_scale(float)·multi_shot은 생략(기본값 사용).
+const klingT2vFields: FieldType[] = [
+  { kind: 'prompt' },
+  { kind: 'select', param: 'aspect_ratio', label: '화면 비율', options: opts(['16:9', '9:16', '1:1']), default: '16:9' },
+  { kind: 'int', param: 'duration', label: '길이(초)', options: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], default: 5 },
+  { kind: 'toggle', param: 'sound', label: '사운드 생성', default: true },
+]
+const klingT2vAdvanced: FieldType[] = [{ kind: 'negative_prompt' }]
+
+// Kling i2v (문서 확정). aspect_ratio/resolution 없음(스키마 미기재). image 필수 + end_image.
+const klingI2vFields: FieldType[] = [
+  { kind: 'prompt' },
+  { kind: 'image', param: 'image', label: '입력 이미지', required: true },
+  { kind: 'int', param: 'duration', label: '길이(초)', options: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], default: 5 },
+  { kind: 'toggle', param: 'sound', label: '사운드 생성', default: true },
+]
+const klingI2vAdvanced: FieldType[] = [
+  { kind: 'image', param: 'end_image', label: '마지막 프레임 이미지' },
+  { kind: 'negative_prompt' },
+]
+
+// Veo3.1 i2v (문서 확정). image 필수 + last_image + aspect/duration/resolution/audio.
+const veo31I2vFields: FieldType[] = [
+  { kind: 'prompt' },
+  { kind: 'image', param: 'image', label: '입력 이미지', required: true },
+  { kind: 'select', param: 'aspect_ratio', label: '화면 비율', options: opts(['16:9', '9:16']), default: '16:9' },
+  { kind: 'int', param: 'duration', label: '길이(초)', options: [4, 6, 8], default: 8 },
+  { kind: 'select', param: 'resolution', label: '해상도', options: opts(['720p', '1080p', '4k']), default: '720p' },
+  { kind: 'toggle', param: 'generate_audio', label: '오디오 생성', default: true },
+]
+const veo31I2vAdvanced: FieldType[] = [
+  { kind: 'image', param: 'last_image', label: '마지막 프레임 이미지' },
+  { kind: 'negative_prompt' },
+  { kind: 'int', param: 'seed', label: 'Seed' },
+]
+
+// Seedance ref2v (문서 확정). reference_images[] (최대 9).
+const seedanceRef2vFields: FieldType[] = [
+  { kind: 'prompt' },
+  { kind: 'images', param: 'reference_images', label: '참조 이미지', max: 9 },
+  { kind: 'select', param: 'ratio', label: '화면 비율', options: opts(['adaptive', '16:9', '9:16', '1:1', '4:3', '3:4']), default: 'adaptive' },
+  { kind: 'int', param: 'duration', label: '길이(초)', options: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], default: 5 },
+  { kind: 'select', param: 'resolution', label: '해상도', options: opts(['480p', '720p', '1080p']), default: '720p' },
+  { kind: 'toggle', param: 'generate_audio', label: '오디오 생성', default: true },
+]
+const seedanceRef2vAdvanced: FieldType[] = [
+  { kind: 'toggle', param: 'watermark', label: '워터마크', default: false },
+  { kind: 'toggle', param: 'return_last_frame', label: '마지막 프레임 반환', default: false },
+]
+
+// Seedance t2v (i2v/ref2v 패턴에서 추론: image 없음). 모델 문자열 bytedance/seedance-2.0/text-to-video.
+const seedanceT2vFields: FieldType[] = [
+  { kind: 'prompt' },
+  { kind: 'select', param: 'ratio', label: '화면 비율', options: opts(['16:9', '9:16', '1:1', '4:3', '3:4', 'adaptive']), default: '16:9' },
+  { kind: 'int', param: 'duration', label: '길이(초)', options: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], default: 5 },
+  { kind: 'select', param: 'resolution', label: '해상도', options: opts(['480p', '720p', '1080p']), default: '720p' },
+  { kind: 'toggle', param: 'generate_audio', label: '오디오 생성', default: true },
+]
+
 // ── 모달리티별 best-guess 템플릿 (비활성 모델 재사용) ────────────────────
-
-const t2vTemplate: FieldType[] = veo31T2vFields
-const t2vTemplateAdvanced: FieldType[] = veo31T2vAdvanced
-
-const i2vTemplate: FieldType[] = seedance2I2vFields
-const i2vTemplateAdvanced: FieldType[] = seedance2I2vAdvanced
 
 const ref2vTemplate: FieldType[] = [
   { kind: 'prompt' },
@@ -223,10 +278,10 @@ export const MODEL_CONFIGS: ModelConfig[] = [
     output: 'VIDEO',
     displayName: 'Veo 3.1 Fast (텍스트→영상)',
     provider: 'google',
-    isActive: false,
-    pricing: guessVideoPricing({ '4': 0.2, '6': 0.3, '8': 0.4 }, [4, 6, 8]),
-    fields: t2vTemplate,
-    advancedFields: t2vTemplateAdvanced,
+    isActive: true,
+    pricing: { kind: 'per_second', usd_per_unit: 0.05, options: { allowed_durations_sec: [4, 6, 8], polling_interval_sec: 60 } },
+    fields: veo31T2vFields,
+    advancedFields: veo31T2vAdvanced,
     durationParam: 'duration',
   },
   {
@@ -237,10 +292,10 @@ export const MODEL_CONFIGS: ModelConfig[] = [
     output: 'VIDEO',
     displayName: 'Veo 3.1 (이미지→영상)',
     provider: 'google',
-    isActive: false,
-    pricing: guessVideoPricing({ '4': 0.4, '6': 0.6, '8': 0.8 }, [4, 6, 8]),
-    fields: i2vTemplate,
-    advancedFields: i2vTemplateAdvanced,
+    isActive: true,
+    pricing: { kind: 'per_second', usd_per_unit: 0.1, options: { allowed_durations_sec: [4, 6, 8], polling_interval_sec: 60 } },
+    fields: veo31I2vFields,
+    advancedFields: veo31I2vAdvanced,
     durationParam: 'duration',
   },
   {
@@ -251,10 +306,10 @@ export const MODEL_CONFIGS: ModelConfig[] = [
     output: 'VIDEO',
     displayName: 'Veo 3.1 Fast (이미지→영상)',
     provider: 'google',
-    isActive: false,
-    pricing: guessVideoPricing({ '4': 0.2, '6': 0.3, '8': 0.4 }, [4, 6, 8]),
-    fields: i2vTemplate,
-    advancedFields: i2vTemplateAdvanced,
+    isActive: true,
+    pricing: { kind: 'per_second', usd_per_unit: 0.05, options: { allowed_durations_sec: [4, 6, 8], polling_interval_sec: 60 } },
+    fields: veo31I2vFields,
+    advancedFields: veo31I2vAdvanced,
     durationParam: 'duration',
   },
   {
@@ -268,7 +323,7 @@ export const MODEL_CONFIGS: ModelConfig[] = [
     isActive: false,
     pricing: guessVideoPricing({ '4': 0.4, '6': 0.6, '8': 0.8 }, [4, 6, 8]),
     fields: ref2vTemplate,
-    advancedFields: t2vTemplateAdvanced,
+    advancedFields: veo31T2vAdvanced,
     durationParam: 'duration',
   },
   {
@@ -279,10 +334,9 @@ export const MODEL_CONFIGS: ModelConfig[] = [
     output: 'VIDEO',
     displayName: 'Seedance 2.0 (텍스트→영상)',
     provider: 'bytedance',
-    isActive: false,
-    pricing: guessVideoPricing({ '5': 0.4, '10': 0.7, '15': 1.0 }, [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]),
-    fields: t2vTemplate,
-    advancedFields: t2vTemplateAdvanced,
+    isActive: true,
+    pricing: { kind: 'per_second', usd_per_unit: 0.07, options: { allowed_durations_sec: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], polling_interval_sec: 60 } },
+    fields: seedanceT2vFields,
     durationParam: 'duration',
   },
   {
@@ -293,66 +347,66 @@ export const MODEL_CONFIGS: ModelConfig[] = [
     output: 'VIDEO',
     displayName: 'Seedance 2.0 (참조→영상)',
     provider: 'bytedance',
-    isActive: false,
-    pricing: guessVideoPricing({ '5': 0.4, '10': 0.7, '15': 1.0 }, [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]),
-    fields: ref2vTemplate,
-    advancedFields: i2vTemplateAdvanced,
+    isActive: true,
+    pricing: { kind: 'per_second', usd_per_unit: 0.08, options: { allowed_durations_sec: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], polling_interval_sec: 60 } },
+    fields: seedanceRef2vFields,
+    advancedFields: seedanceRef2vAdvanced,
     durationParam: 'duration',
   },
   {
     id: 'kling-v3-std-t2v',
-    atlasModel: 'kuaishou/kling-v3.0-std/text-to-video',
+    atlasModel: 'kwaivgi/kling-v3.0-std/text-to-video',
     family: 'kling',
     modality: 'text-to-video',
     output: 'VIDEO',
     displayName: 'Kling v3 Std (텍스트→영상)',
-    provider: 'kuaishou',
-    isActive: false,
-    pricing: { kind: 'per_second', usd_per_unit: 0.07, options: { allowed_durations_sec: [5, 10], polling_interval_sec: 60 } },
-    fields: t2vTemplate,
-    advancedFields: t2vTemplateAdvanced,
+    provider: 'kwaivgi',
+    isActive: true,
+    pricing: { kind: 'per_second', usd_per_unit: 0.06, options: { allowed_durations_sec: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], polling_interval_sec: 60 } },
+    fields: klingT2vFields,
+    advancedFields: klingT2vAdvanced,
     durationParam: 'duration',
   },
   {
     id: 'kling-v3-pro-t2v',
-    atlasModel: 'kuaishou/kling-v3.0-pro/text-to-video',
+    atlasModel: 'kwaivgi/kling-v3.0-pro/text-to-video',
     family: 'kling',
     modality: 'text-to-video',
     output: 'VIDEO',
     displayName: 'Kling v3 Pro (텍스트→영상)',
-    provider: 'kuaishou',
-    isActive: false,
-    pricing: { kind: 'per_second', usd_per_unit: 0.12, options: { allowed_durations_sec: [5, 10], polling_interval_sec: 60 } },
-    fields: t2vTemplate,
-    advancedFields: t2vTemplateAdvanced,
+    provider: 'kwaivgi',
+    isActive: true,
+    pricing: { kind: 'per_second', usd_per_unit: 0.09, options: { allowed_durations_sec: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], polling_interval_sec: 60 } },
+    fields: klingT2vFields,
+    advancedFields: klingT2vAdvanced,
     durationParam: 'duration',
   },
   {
     id: 'kling-v3-std-i2v',
-    atlasModel: 'kuaishou/kling-v3.0-std/image-to-video',
+    atlasModel: 'kwaivgi/kling-v3.0-std/image-to-video',
     family: 'kling',
     modality: 'image-to-video',
     output: 'VIDEO',
     displayName: 'Kling v3 Std (이미지→영상)',
-    provider: 'kuaishou',
-    isActive: false,
-    pricing: { kind: 'per_second', usd_per_unit: 0.07, options: { allowed_durations_sec: [5, 10], polling_interval_sec: 60 } },
-    fields: i2vTemplate,
-    advancedFields: i2vTemplateAdvanced,
+    provider: 'kwaivgi',
+    isActive: true,
+    pricing: { kind: 'per_second', usd_per_unit: 0.06, options: { allowed_durations_sec: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], polling_interval_sec: 60 } },
+    fields: klingI2vFields,
+    advancedFields: klingI2vAdvanced,
     durationParam: 'duration',
   },
   {
     id: 'kling-v3-pro-i2v',
-    atlasModel: 'kuaishou/kling-v3.0-pro/image-to-video',
+    atlasModel: 'kwaivgi/kling-v3.0-pro/image-to-video',
     family: 'kling',
     modality: 'image-to-video',
     output: 'VIDEO',
     displayName: 'Kling v3 Pro (이미지→영상)',
-    provider: 'kuaishou',
-    isActive: false,
-    pricing: { kind: 'per_second', usd_per_unit: 0.12, options: { allowed_durations_sec: [5, 10], polling_interval_sec: 60 } },
-    fields: i2vTemplate,
-    advancedFields: i2vTemplateAdvanced,
+    provider: 'kwaivgi',
+    isActive: true,
+    pricing: { kind: 'per_second', usd_per_unit: 0.09, options: { allowed_durations_sec: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], polling_interval_sec: 60 } },
+    fields: klingI2vFields,
+    advancedFields: klingI2vAdvanced,
     durationParam: 'duration',
   },
 

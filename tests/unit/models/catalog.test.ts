@@ -63,13 +63,22 @@ describe('catalog registry', () => {
     expect(ids).toEqual(
       [
         'gpt-image-2.0',
-        'nanobanana-2-ref2i',
         'nanobanana-2-t2i',
+        'nanobanana-2-ref2i',
         'nanobanana-pro-t2i',
-        'seedance-2-i2v',
         'seedream-v4-t2i',
         'seedream-v4.5-t2i',
         'veo3.1-t2v',
+        'veo3.1-fast-t2v',
+        'veo3.1-i2v',
+        'veo3.1-fast-i2v',
+        'seedance-2-i2v',
+        'seedance-2-t2v',
+        'seedance-2-ref2v',
+        'kling-v3-std-t2v',
+        'kling-v3-pro-t2v',
+        'kling-v3-std-i2v',
+        'kling-v3-pro-i2v',
       ].sort(),
     )
     // 모든 활성 config는 비어있지 않은 atlasModel (gpt-image=OpenAI 예외)
