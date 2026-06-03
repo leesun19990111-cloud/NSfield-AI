@@ -1,4 +1,5 @@
 import { AdapterError } from '@/lib/models/adapter'
+import { fetchWithTimeout } from '@/lib/http/fetch'
 
 const ATLAS_BASE = 'https://api.atlascloud.ai/api/v1/model'
 
@@ -9,11 +10,11 @@ export async function atlasUploadMedia(file: Blob, filename: string): Promise<st
   if (!key) throw new AdapterError('ATLASCLOUD_NO_KEY', 'ATLASCLOUD_API_KEY 미설정')
   const form = new FormData()
   form.append('file', file, filename)
-  const res = await fetch(`${ATLAS_BASE}/uploadMedia`, {
+  const res = await fetchWithTimeout(`${ATLAS_BASE}/uploadMedia`, {
     method: 'POST',
     headers: { authorization: `Bearer ${key}` },
     body: form,
-  })
+  }, 60000)
   if (!res.ok) throw new AdapterError('ATLASCLOUD_UPLOAD_FAILED', `uploadMedia ${res.status}`)
   const json = (await res.json()) as { data?: { url?: string; asset_id?: string }; url?: string }
   const url =

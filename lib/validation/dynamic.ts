@@ -45,5 +45,5 @@ export function buildInputSchema(config: ModelConfig): z.ZodType<Record<string, 
     const fs = fieldSchema(f)
     if (fs) shape[fs.key] = fs.schema
   }
-  return z.object(shape).passthrough() as z.ZodType<Record<string, unknown>>
+  return z.object(shape) as z.ZodType<Record<string, unknown>>
 }

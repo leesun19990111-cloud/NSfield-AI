@@ -29,10 +29,12 @@ export function FamilyModelCard({
         )}
       </div>
       <div className="font-semibold">{model.display_name}</div>
-      <div className="text-sm">
-        {model.kind === 'IMAGE' ? '1장' : '최저'}{' '}
-        <MoneyText usd={lowestUsd} krw={krw} primary="usd" />~
-      </div>
+      {model.is_active && (
+        <div className="text-sm">
+          {model.kind === 'IMAGE' ? '1장' : '최저'}{' '}
+          <MoneyText usd={lowestUsd} krw={krw} primary="usd" />~
+        </div>
+      )}
       {model.is_active ? (
         <Link
           href={`/generate/${model.id}`}

@@ -6,7 +6,7 @@ import type { GenerationParams } from '@/lib/models/types'
 import { atlasSubmit, atlasPoll } from './client'
 
 const POLL_INTERVAL_MS = 2000
-const MAX_POLL_MS = 50_000
+const MAX_POLL_MS = 40_000
 
 async function urlToBase64(url: string): Promise<{ b64: string; contentType: string }> {
   if (url.startsWith('data:')) {
@@ -28,7 +28,7 @@ function tokensFromRaw(raw: unknown): number | undefined {
   return undefined
 }
 
-// 이미지: 동기 (submit + inline poll ≤ 50s → base64)
+// 이미지: 동기 (submit + inline poll ≤ 40s → base64)
 export function makeAtlasImageAdapter(config: ModelConfig): ImageAdapter {
   return {
     id: config.id,

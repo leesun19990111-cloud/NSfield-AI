@@ -24,6 +24,10 @@ export async function POST(request: Request) {
   if (!(file instanceof Blob)) return NextResponse.json({ ok: false, message: '파일이 필요합니다.' }, { status: 400 })
   // 크기/타입 가드 (≤30MB, 이미지)
   if (file.size > 30 * 1024 * 1024) return NextResponse.json({ ok: false, message: '파일이 너무 큽니다(최대 30MB).' }, { status: 400 })
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+  if (file.type && !allowedTypes.includes(file.type)) {
+    return NextResponse.json({ ok: false, message: '이미지 파일만 업로드 가능합니다.' }, { status: 400 })
+  }
   const filename = (form.get('filename') as string) || 'upload'
   try {
     const url = await atlasUploadMedia(file, filename)

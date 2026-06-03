@@ -11,7 +11,6 @@ import { computeSettlementKrw } from '@/lib/generation/settle'
 import { checkDualLimit, RATE_LIMITS } from '@/lib/rate-limit/token-bucket'
 import { getModelConfig } from '@/lib/models/catalog/registry'
 import { buildInputSchema } from '@/lib/validation/dynamic'
-import type { ModelConfig } from '@/lib/models/catalog/types'
 import type { ModelMeta, PricingJson, GenerationParams } from '@/lib/models/types'
 import { revalidatePath } from 'next/cache'
 
@@ -24,19 +23,6 @@ function toModelMeta(m: {
     provider: m.provider, is_active: m.is_active,
     margin_pct: Number(m.margin_pct), pricing_json: m.pricing_json as PricingJson,
   }
-}
-
-// config가 등록되지 않은 모델(테스트 mock 등)을 위한 폴백: prompt(+영상이면 duration_sec)만.
-function configFor(modelId: string, dbKind: 'IMAGE' | 'VIDEO'): ModelConfig {
-  const c = getModelConfig(modelId)
-  if (c) return c
-  return {
-    id: modelId, atlasModel: modelId, family: 'mock', modality: 'text-to-image',
-    output: dbKind, displayName: modelId, provider: 'mock', isActive: true, pricing: {},
-    fields: [{ kind: 'prompt' } as const],
-    advancedFields: dbKind === 'VIDEO' ? [{ kind: 'int', param: 'duration_sec', label: 'duration' } as const] : [],
-    durationParam: dbKind === 'VIDEO' ? 'duration_sec' : undefined,
-  } as unknown as ModelConfig
 }
 
 export type EstimateResult =
@@ -58,7 +44,8 @@ export async function estimateGeneration(input: EstimateInput): Promise<Estimate
   }
   const model = await prisma.model.findUnique({ where: { id: input.modelId } })
   if (!model || !model.is_active) return { ok: false, message: '사용할 수 없는 모델입니다.' }
-  const config = configFor(model.id, model.kind as 'IMAGE' | 'VIDEO')
+  const config = getModelConfig(model.id)
+  if (!config) return { ok: false, message: '모델 설정을 찾을 수 없습니다.' }
   const meta = toModelMeta(model)
 
   // 영상이면 durationParam 값(또는 명시적 duration_sec)을 가격용 duration_sec로 매핑.
@@ -99,7 +86,8 @@ export async function createGeneration(
     return { ok: false, code: 'MODEL', message: '사용할 수 없는 모델입니다.' }
   }
   const dbKind = model.kind as 'IMAGE' | 'VIDEO'
-  const config = configFor(model.id, dbKind)
+  const config = getModelConfig(model.id)
+  if (!config) return { ok: false, code: 'MODEL', message: '모델 설정을 찾을 수 없습니다.' }
 
   // 1) 입력 검증 (config 기반)
   const schema = buildInputSchema(config)
@@ -128,13 +116,15 @@ export async function createGeneration(
 
   // 가격: 영상이면 durationParam 값을 duration_sec로 매핑.
   // (durationParam 키가 없으면 명시적 duration_sec로 폴백 — estimateGeneration과 동일 규약)
+  // duration_sec는 필드로 선언되지 않아 strip될 수 있으므로 raw inputs에서도 폴백한다.
   const durationVal = config.durationParam
-    ? data[config.durationParam] ?? data.duration_sec
-    : data.duration_sec
+    ? data[config.durationParam] ?? inputs.duration_sec
+    : inputs.duration_sec
   let billedUsd: number
   try {
     billedUsd = estimateBilledUsd(meta, {
-      prompt, count: 1,
+      prompt,
+      count: typeof inputs.count === 'number' && inputs.count > 0 ? inputs.count : 1,
       duration_sec: durationVal !== undefined ? Number(durationVal) : undefined,
     })
   } catch (e) {
@@ -262,7 +252,7 @@ export async function createGeneration(
 export async function createImageGeneration(
   input: { modelId: string; prompt: string; count?: number },
 ): Promise<CreateResult> {
-  return createGeneration(input.modelId, { prompt: input.prompt })
+  return createGeneration(input.modelId, { prompt: input.prompt, count: input.count })
 }
 
 export async function createVideoGeneration(
