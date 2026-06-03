@@ -1,22 +1,10 @@
-import { listActiveModels } from '@/lib/actions/models'
-import { lowestBilledUsd } from '@/lib/models/catalog-pricing'
-import { ModelCard } from '@/components/models/ModelCard'
+import { listFamilies } from '@/lib/actions/models'
+import { FamilyCard } from '@/components/models/FamilyCard'
 
-export default async function ModelsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ kind?: string }>
-}) {
-  const { kind } = await searchParams
-  const { models, fxRate } = await listActiveModels()
-  const filtered =
-    kind === 'image'
-      ? models.filter((m) => m.kind === 'IMAGE')
-      : kind === 'video'
-        ? models.filter((m) => m.kind === 'VIDEO')
-        : models
-  const images = filtered.filter((m) => m.kind === 'IMAGE')
-  const videos = filtered.filter((m) => m.kind === 'VIDEO')
+export const dynamic = 'force-dynamic'
+
+export default async function ModelsPage() {
+  const { families, fxRate } = await listFamilies()
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
       <div className="flex items-center justify-between">
@@ -25,26 +13,17 @@ export default async function ModelsPage({
           현재 환율 1USD = {fxRate.toLocaleString('ko-KR')}₩
         </div>
       </div>
-      {images.length > 0 && (
-        <section>
-          <h2 className="text-sm font-semibold mb-3 text-[var(--text-muted)]">이미지</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {images.map((m) => (
-              <ModelCard key={m.id} model={m} fxRate={fxRate} lowestUsd={lowestBilledUsd(m)} />
-            ))}
-          </div>
-        </section>
-      )}
-      {videos.length > 0 && (
-        <section>
-          <h2 className="text-sm font-semibold mb-3 text-[var(--text-muted)]">영상</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {videos.map((m) => (
-              <ModelCard key={m.id} model={m} fxRate={fxRate} lowestUsd={lowestBilledUsd(m)} />
-            ))}
-          </div>
-        </section>
-      )}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {families.map((f) => (
+          <FamilyCard
+            key={f.family}
+            family={f.family}
+            active={f.active}
+            minUsd={f.minUsd}
+            fxRate={fxRate}
+          />
+        ))}
+      </div>
     </div>
   )
 }
