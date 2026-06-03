@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // 생성된 Prisma 클라이언트 (postinstall로 재생성, lint 대상 아님)
+    "lib/generated/**",
   ]),
 ]);
 
