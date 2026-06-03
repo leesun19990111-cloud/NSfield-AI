@@ -1,0 +1,4 @@
+# bkit 런타임 로그 (자동 생성)
+.bkit/audit/
+.bkit/runtime/
+.bkit/snapshots/
