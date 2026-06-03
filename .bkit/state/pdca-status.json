@@ -1,10 +1,11 @@
 {
   "version": "3.0",
-  "lastUpdated": "2026-06-03T07:05:25.053Z",
+  "lastUpdated": "2026-06-03T07:10:52.965Z",
   "activeFeatures": [
     "NSfield",
     "unit",
-    "supabase"
+    "supabase",
+    "db"
   ],
   "primaryFeature": "NSfield",
   "features": {
@@ -17,9 +18,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-06-03T06:54:25.071Z",
-        "lastUpdated": "2026-06-03T07:05:25.051Z"
+        "lastUpdated": "2026-06-03T07:10:32.383Z"
       },
-      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\middleware.ts"
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\prisma.config.ts"
     },
     "unit": {
       "phase": "do",
@@ -46,6 +47,19 @@
         "lastUpdated": "2026-06-03T07:05:23.266Z"
       },
       "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\lib\\supabase\\middleware.ts"
+    },
+    "db": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-06-03T07:10:52.963Z",
+        "lastUpdated": "2026-06-03T07:10:52.963Z"
+      },
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\lib\\db\\prisma.ts"
     }
   },
   "pipeline": {
@@ -56,7 +70,7 @@
   "session": {
     "startedAt": "2026-05-27T03:22:28.164Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-06-03T07:05:25.053Z"
+    "lastActivity": "2026-06-03T07:10:52.965Z"
   },
   "history": [
     {
@@ -110,6 +124,18 @@
     {
       "timestamp": "2026-06-03T07:05:25.052Z",
       "feature": "NSfield",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T07:10:32.385Z",
+      "feature": "NSfield",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T07:10:52.965Z",
+      "feature": "db",
       "phase": "do",
       "action": "updated"
     }

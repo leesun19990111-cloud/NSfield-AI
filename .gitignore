@@ -38,9 +38,15 @@ yarn-error.log*
 # env files
 .env*.local
 
+# Prisma placeholder env (real values live in .env.local)
+/.env
+!.env.example
+
 # vercel
 .vercel
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/lib/generated/prisma
