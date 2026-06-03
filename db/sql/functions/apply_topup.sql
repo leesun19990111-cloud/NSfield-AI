@@ -1,3 +1,4 @@
+-- 호출자(Prisma postgres owner)는 RLS를 우회한다. 권한 검증은 호출 측 Server Action의 requireAdmin/requireUser가 담당.
 -- 충전 요청 승인: 상태 변경 + 잔액 적용을 한 트랜잭션으로.
 -- id 컬럼은 TEXT이므로 파라미터도 text.
 create or replace function apply_topup(

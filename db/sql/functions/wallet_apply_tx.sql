@@ -1,3 +1,4 @@
+-- 호출자(Prisma postgres owner)는 RLS를 우회한다. 권한 검증은 호출 측 Server Action의 requireAdmin/requireUser가 담당.
 -- 잔액 변동의 단일 진입점. 잔액 = Σ(거래) 불변식과 음수 차단을 강제한다.
 -- id/wallet_id/ref_id 컬럼은 TEXT(Prisma String @default(uuid()))이므로 파라미터도 text.
 drop function if exists wallet_apply_tx(uuid, text, int, text, uuid, text);
