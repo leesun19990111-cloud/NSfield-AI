@@ -18,7 +18,9 @@ export function lowestBilledUsd(model: {
   if (meta.kind === 'IMAGE') return estimateBilledUsd(meta, { prompt: 'x', count: 1 })
   const p = meta.pricing_json
   if (p.kind === 'per_video_fixed') {
-    const min = Math.min(...p.options.allowed_durations_sec)
+    // 최저가는 가장 싼 tier 기준. allowed_durations_sec의 최소값이 tier에 없을 수 있으므로
+    // (예: 허용 [4..15]·tier {5,10,15}) tier 키만으로 산정한다.
+    const min = Math.min(...Object.keys(p.tiers).map(Number))
     return estimateBilledUsd(meta, { prompt: 'x', duration_sec: min })
   }
   if (p.kind === 'per_second') {

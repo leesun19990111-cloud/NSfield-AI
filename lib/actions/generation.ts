@@ -127,7 +127,10 @@ export async function createGeneration(
   const prompt = String(data.prompt ?? '')
 
   // 가격: 영상이면 durationParam 값을 duration_sec로 매핑.
-  const durationVal = config.durationParam ? data[config.durationParam] : undefined
+  // (durationParam 키가 없으면 명시적 duration_sec로 폴백 — estimateGeneration과 동일 규약)
+  const durationVal = config.durationParam
+    ? data[config.durationParam] ?? data.duration_sec
+    : data.duration_sec
   let billedUsd: number
   try {
     billedUsd = estimateBilledUsd(meta, {
