@@ -12,7 +12,7 @@ export function TopBar({ user }: { user: SessionUser }) {
           <Link href="/library" className="text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)]">라이브러리</Link>
         </nav>
         <div className="flex items-center gap-3">
-          <BalanceChip userId={user.id} />
+          <BalanceChip />
           {user.role === 'ADMIN' && (
             <Link href="/admin" className="text-sm text-[var(--accent)]">관리자</Link>
           )}

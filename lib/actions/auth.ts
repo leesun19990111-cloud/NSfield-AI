@@ -19,7 +19,10 @@ export async function signUpWithPassword(email: string, password: string): Promi
     password,
     options: { emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback` },
   })
-  if (error) return { ok: false, message: '가입에 실패했습니다: ' + error.message }
+  if (error) {
+    console.error('[signUp] failed:', error.message)
+    return { ok: false, message: '가입에 실패했습니다. 이미 가입된 이메일이거나 비밀번호가 너무 짧을 수 있습니다.' }
+  }
   return { ok: true }
 }
 

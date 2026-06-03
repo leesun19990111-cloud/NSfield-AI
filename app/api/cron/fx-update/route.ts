@@ -10,6 +10,7 @@ export async function GET(request: Request) {
     const rate = await refreshFxRate()
     return NextResponse.json({ ok: true, rate })
   } catch (e) {
-    return NextResponse.json({ ok: false, error: String(e) }, { status: 500 })
+    console.error('[fx-update] failed:', e)
+    return NextResponse.json({ ok: false, error: 'FX_REFRESH_FAILED' }, { status: 500 })
   }
 }
