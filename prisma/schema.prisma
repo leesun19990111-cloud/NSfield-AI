@@ -75,6 +75,9 @@ model TopupRequest {
 model Model {
   id            String    @id
   kind          ModelKind
+  family        String    @default("")
+  modality      String    @default("")
+  atlas_model   String    @default("")
   display_name  String
   provider      String
   is_active     Boolean   @default(true)
