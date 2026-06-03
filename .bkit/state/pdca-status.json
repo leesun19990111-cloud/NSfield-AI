@@ -1,9 +1,39 @@
 {
   "version": "3.0",
-  "lastUpdated": "2026-05-27T03:22:28.305Z",
-  "activeFeatures": [],
-  "primaryFeature": null,
-  "features": {},
+  "lastUpdated": "2026-06-03T06:54:47.270Z",
+  "activeFeatures": [
+    "NSfield",
+    "unit"
+  ],
+  "primaryFeature": "NSfield",
+  "features": {
+    "NSfield": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-06-03T06:54:25.071Z",
+        "lastUpdated": "2026-06-03T06:54:47.268Z"
+      },
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\app\\layout.tsx"
+    },
+    "unit": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-06-03T06:54:26.654Z",
+        "lastUpdated": "2026-06-03T06:54:26.654Z"
+      },
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\tests\\unit\\smoke.test.ts"
+    }
+  },
   "pipeline": {
     "currentPhase": 1,
     "level": "Dynamic",
@@ -12,9 +42,34 @@
   "session": {
     "startedAt": "2026-05-27T03:22:28.164Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-05-27T03:22:28.305Z"
+    "lastActivity": "2026-06-03T06:54:47.270Z"
   },
-  "history": [],
+  "history": [
+    {
+      "timestamp": "2026-06-03T06:54:25.147Z",
+      "feature": "NSfield",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T06:54:26.656Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T06:54:45.719Z",
+      "feature": "NSfield",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-03T06:54:47.270Z",
+      "feature": "NSfield",
+      "phase": "do",
+      "action": "updated"
+    }
+  ],
   "stateMachine": {
     "defaultWorkflow": "default",
     "activeWorkflows": {},
