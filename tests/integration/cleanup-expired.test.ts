@@ -6,7 +6,7 @@ import { uploadGenerationImages, deleteGenerationObjects } from '@/lib/storage/u
 
 const TINY = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='
 
-const uId = '88888888-8888-8888-8888-888888888888'
+const uId = 'cccccccc-cccc-cccc-cccc-cccccccccccc'
 const genId = `gen-cleanup-${Date.now()}`
 const objPath = `${uId}/${genId}/output_0.png`
 

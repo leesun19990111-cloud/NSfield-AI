@@ -221,7 +221,7 @@ export async function createVideoGeneration(input: VideoGenerateInput): Promise<
     return { ok: false, code: 'UNKNOWN', message: '생성 요청 처리에 실패했습니다.' }
   }
 
-  // 2) 외부 작업 등록 → 실패 시 전액 환불
+  // 2) 외부 작업 등록 + RUNNING 전이. 어느 단계든 실패하면 전액 환불 + FAILED.
   try {
     const { externalJobId } = await adapter.start({ prompt: d.prompt, duration_sec: d.duration_sec })
     await prisma.generation.update({
@@ -229,13 +229,16 @@ export async function createVideoGeneration(input: VideoGenerateInput): Promise<
       data: { status: 'RUNNING', external_job_id: externalJobId, started_at: new Date() },
     })
   } catch (e) {
-    console.error('[createVideoGeneration] adapter.start failed:', e)
+    console.error('[createVideoGeneration] start/RUNNING-transition failed:', generationId, e)
     try {
       await prisma.$executeRaw`SELECT wallet_apply_tx(${wallet.id}::text, 'REFUND', ${krw}::int, 'generation', ${generationId}::text, ${'영상 등록 실패 환불'})`
     } catch (refundErr) { console.error('[CRITICAL] REFUND FAILED:', generationId, refundErr) }
     try {
-      await prisma.generation.update({ where: { id: generationId }, data: { status: 'FAILED', failed_reason: (e instanceof Error ? e.message : 'start failed').slice(0, 500), finished_at: new Date() } })
-    } catch (uErr) { console.error('[createVideoGeneration] FAILED update err:', uErr) }
+      await prisma.generation.updateMany({
+        where: { id: generationId, status: { in: ['PENDING', 'RUNNING'] } },
+        data: { status: 'FAILED', failed_reason: (e instanceof Error ? e.message : 'start failed').slice(0, 500), finished_at: new Date() },
+      })
+    } catch (uErr) { console.error('[createVideoGeneration] FAILED update err:', generationId, uErr) }
     return { ok: false, code: 'ADAPTER', message: '영상 작업 등록에 실패했습니다. 차감 금액은 환불되었습니다.' }
   }
 

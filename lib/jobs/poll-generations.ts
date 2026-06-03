@@ -36,9 +36,13 @@ export async function pollRunningVideoGenerations(): Promise<{ processed: number
   })
   let succeeded = 0, failed = 0, processed = 0
 
+  const modelIds = [...new Set(running.map((g) => g.model_id))]
+  const models = await prisma.model.findMany({ where: { id: { in: modelIds } } })
+  const modelMap = new Map(models.map((m) => [m.id, m]))
+
   for (const gen of running) {
     // 모델 폴링 간격
-    const model = await prisma.model.findUnique({ where: { id: gen.model_id } })
+    const model = modelMap.get(gen.model_id)
     const pollIntervalSec = (model?.pricing_json as { options?: { polling_interval_sec?: number } } | null)?.options?.polling_interval_sec ?? 60
     if (gen.last_polled_at && Date.now() - new Date(gen.last_polled_at).getTime() < pollIntervalSec * 1000) {
       continue
@@ -76,23 +80,12 @@ export async function pollRunningVideoGenerations(): Promise<{ processed: number
       continue
     }
 
-    // succeeded: 다운로드 → 저장 → 정산 → SUCCEEDED
+    // succeeded: 다운로드 → 저장 → SUCCEEDED 전이(가드) → 전이 성공 시에만 정산
     try {
       const { b64, contentType } = await fetchAsBase64(result.videoUrl)
       const ext = contentType.includes('mp4') ? 'mp4' : contentType.includes('png') ? 'png' : 'bin'
       const path = `${gen.user_id}/${gen.id}/output_0.${ext}`
       const paths = await uploadGenerationImages([{ path, b64, contentType }])
-
-      // 정산 (고정가 영상: actual==estimate → 0). charged_krw 기준.
-      const charged = gen.charged_krw ?? 0
-      const extra = computeSettlementKrw(charged, charged)
-      if (extra > 0) {
-        const wallet = await prisma.wallet.findUnique({ where: { user_id: gen.user_id } })
-        if (wallet) {
-          try { await prisma.$executeRaw`SELECT wallet_apply_tx(${wallet.id}::text, 'CHARGE', ${-extra}::int, 'generation', ${gen.id}::text, ${'정산 차액'})` }
-          catch (e) { console.error('[poll] settlement charge failed', gen.id, e) }
-        }
-      }
 
       const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
       const upd = await prisma.generation.updateMany({
@@ -103,7 +96,19 @@ export async function pollRunningVideoGenerations(): Promise<{ processed: number
           result_meta_json: (result.meta ?? {}) as object,
         },
       })
-      if (upd.count > 0) succeeded++
+      if (upd.count > 0) {
+        // 이 인스턴스만 RUNNING→SUCCEEDED 전이에 성공 → 정산은 여기서만
+        const charged = gen.charged_krw ?? 0
+        const extra = computeSettlementKrw(charged, charged) // 고정가: 0. per_second 모델 추가 시 result.cost_usd_raw로 actual 계산 필요(TODO)
+        if (extra > 0) {
+          const wallet = await prisma.wallet.findUnique({ where: { user_id: gen.user_id } })
+          if (wallet) {
+            try { await prisma.$executeRaw`SELECT wallet_apply_tx(${wallet.id}::text, 'CHARGE', ${-extra}::int, 'generation', ${gen.id}::text, ${'정산 차액'})` }
+            catch (e) { console.error('[poll] settlement charge failed', gen.id, e) }
+          }
+        }
+        succeeded++
+      }
     } catch (e) {
       console.error('[poll] succeeded-handling failed (refund)', gen.id, e)
       const upd = await prisma.generation.updateMany({

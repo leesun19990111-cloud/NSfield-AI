@@ -19,6 +19,8 @@ export function GenerationLiveStatus({ userId }: { userId: string }) {
       )
       .subscribe()
     return () => { supabase.removeChannel(channel) }
-  }, [userId, router])
+    // router.refresh는 안정적이므로 deps에서 제외해 재구독 churn을 방지
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId])
   return null
 }

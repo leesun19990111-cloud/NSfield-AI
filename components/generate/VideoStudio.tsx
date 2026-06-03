@@ -23,7 +23,7 @@ export function VideoStudio({ modelId, modelName, fxRate, allowedDurations, allD
   async function onEstimate(nextDuration = duration) {
     if (!prompt.trim()) return
     const res = await estimateGeneration({ modelId, prompt, duration_sec: nextDuration })
-    if (res.ok) setEst({ usd: res.billedUsd, krw: res.krw })
+    if (res.ok) { setEst({ usd: res.billedUsd, krw: res.krw }); setError(null) }
     else { setEst(null); setError(res.message) }
   }
 

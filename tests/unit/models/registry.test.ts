@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import { getImageAdapter, getVideoAdapter } from '@/lib/models/registry'
 
 describe('registry', () => {
@@ -25,5 +25,19 @@ describe('registry', () => {
   })
   it('미등록 영상 모델은 null', () => {
     expect(getVideoAdapter('nope')).toBeNull()
+  })
+})
+
+describe('registry production gating', () => {
+  afterEach(() => { vi.unstubAllEnvs(); vi.resetModules() })
+  it('production에서는 mock 어댑터가 제외됨', async () => {
+    vi.stubEnv('NODE_ENV', 'production')
+    vi.resetModules()
+    const reg = await import('@/lib/models/registry')
+    expect(reg.getImageAdapter('mock-image')).toBeNull()
+    expect(reg.getVideoAdapter('mock-video')).toBeNull()
+    // 실제 어댑터는 여전히 등록
+    expect(reg.getImageAdapter('gpt-image-2.0')?.id).toBe('gpt-image-2.0')
+    expect(reg.getVideoAdapter('veo3')?.id).toBe('veo3')
   })
 })

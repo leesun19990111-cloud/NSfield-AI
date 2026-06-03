@@ -2,8 +2,9 @@ import { NextResponse } from 'next/server'
 import { cleanupExpiredGenerations } from '@/lib/jobs/cleanup-expired'
 
 export async function GET(request: Request) {
+  const secret = process.env.CRON_SECRET
   const auth = request.headers.get('authorization')
-  if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!secret || auth !== `Bearer ${secret}`) {
     return NextResponse.json({ ok: false }, { status: 401 })
   }
   try {
