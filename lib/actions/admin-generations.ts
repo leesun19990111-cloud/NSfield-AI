@@ -82,15 +82,22 @@ export async function forceRefund(genId: string, reason: string): Promise<AdminA
   try {
     await prisma.$executeRaw`SELECT wallet_apply_tx(${wallet.id}::text, 'REFUND', ${gen.charged_krw}::int, 'generation', ${genId}::text, ${reason})`
   } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e)
+    // 부분 유니크 인덱스 위반 = 동시/중복 환불
+    if (msg.includes('uniq_refund_per_generation') || msg.includes('duplicate key') || msg.includes('23505')) {
+      return { ok: false, message: '이미 환불된 생성입니다.' }
+    }
     console.error('[forceRefund] failed:', e)
     return { ok: false, message: '환불 처리에 실패했습니다.' }
   }
+  const updated = await prisma.wallet.findUnique({ where: { id: wallet.id } })
   await recordAdminAction({
     adminId: admin.id,
     action: 'force_refund',
     targetType: 'generation',
     targetId: genId,
     before: { charged_krw: gen.charged_krw, status: gen.status },
+    after: { balance_krw: updated?.balance_krw },
     reason,
   })
   revalidatePath('/admin/generations')

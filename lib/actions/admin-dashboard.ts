@@ -15,9 +15,11 @@ export type DashboardStats = {
 export async function getDashboardStats(): Promise<DashboardStats> {
   await requireAdmin()
   const now = new Date()
-  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
-  const weekStart = new Date(todayStart); weekStart.setDate(weekStart.getDate() - 6)
+  const KST = 9 * 60 * 60 * 1000
+  const nowKstParts = new Date(now.getTime() + KST)
+  const todayStart = new Date(Date.UTC(nowKstParts.getUTCFullYear(), nowKstParts.getUTCMonth(), nowKstParts.getUTCDate()) - KST)
+  const monthStart = new Date(Date.UTC(nowKstParts.getUTCFullYear(), nowKstParts.getUTCMonth(), 1) - KST)
+  const weekStart = new Date(todayStart.getTime() - 6 * 24 * 60 * 60 * 1000)
   const thirtyMinAgo = new Date(now.getTime() - 30 * 60 * 1000)
 
   // 매출 = CHARGE 차감액의 절대값 합
@@ -51,11 +53,11 @@ export async function getDashboardStats(): Promise<DashboardStats> {
   // 7일 일별 매출
   const dayMap = new Map<string, number>()
   for (let i = 0; i < 7; i++) {
-    const d = new Date(weekStart); d.setDate(weekStart.getDate() + i)
-    dayMap.set(d.toISOString().slice(0, 10), 0)
+    const d = new Date(weekStart.getTime() + i * 24 * 60 * 60 * 1000)
+    dayMap.set(new Date(d.getTime() + KST).toISOString().slice(0, 10), 0)
   }
   for (const c of charges) {
-    const key = c.created_at.toISOString().slice(0, 10)
+    const key = new Date(c.created_at.getTime() + KST).toISOString().slice(0, 10)
     if (dayMap.has(key)) dayMap.set(key, (dayMap.get(key) ?? 0) + Math.abs(c.amount_krw))
   }
   const daily = [...dayMap.entries()].map(([date, revenueKrw]) => ({ date, revenueKrw }))

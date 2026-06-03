@@ -67,6 +67,9 @@ export async function adjustBalance(
   if (!Number.isInteger(amountKrw) || amountKrw === 0) {
     return { ok: false, message: '0이 아닌 정수 금액을 입력하세요.' }
   }
+  if (Math.abs(amountKrw) > 10_000_000) {
+    return { ok: false, message: '단회 조정 한도(±10,000,000원)를 초과했습니다.' }
+  }
   if (!reason.trim()) {
     return { ok: false, message: '사유를 입력하세요.' }
   }
