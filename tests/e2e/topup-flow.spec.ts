@@ -16,9 +16,17 @@ const pw = 'Test1234!'
 const depositorName = `E2E테스트${stamp}`
 let userId = ''
 let adminId = ''
+const fxTestId = `fx-e2e-topup-${stamp}`
 
 test.beforeAll(async () => {
   await pg.connect()
+
+  // /wallet 렌더 시 getCurrentFxRate()가 외부 FX API를 호출하지 않도록
+  // 신선한 환율 행을 보장 (오프라인/환율 staleness 회피). 1시간 이내 캐시 사용.
+  await pg.query(
+    `insert into fx_rates(id,pair,rate,source,fetched_at) values ($1,'USDKRW',1380,'e2e',now())`,
+    [fxTestId],
+  )
   const u = await admin.auth.admin.createUser({
     email: userEmail,
     password: pw,
@@ -58,6 +66,7 @@ test.afterAll(async () => {
     await pg.query(`delete from users where id=$1`, [id])
     await admin.auth.admin.deleteUser(id)
   }
+  await pg.query(`delete from fx_rates where id=$1`, [fxTestId])
   await pg.end()
 })
 
