@@ -42,7 +42,7 @@ Vercel 프로젝트 **Settings > Environment Variables**에 `.env.example`의
 - **NEXT_PUBLIC_SITE_URL** = 실제 배포 도메인(`https://...`). OAuth 콜백과
   이메일 링크 생성에 사용되므로 로컬값(`http://localhost:3000`)을 그대로
   두면 안 된다.
-- **외부 AI 키**(OPENAI / GOOGLE / KLING / BYTEDANCE / NANOBANANA): 보유한
+- **외부 AI 키**(OPENAI / GOOGLE / KLING / BYTEDANCE / ATLASCLOUD): 보유한
   것만 등록한다. 미등록 시 해당 모델만 동작하지 않고 나머지 기능은 정상.
 - **NEXT_PUBLIC_BANK_\*** = 사용자에게 표시되는 입금 계좌 정보(비밀 아님).
 
