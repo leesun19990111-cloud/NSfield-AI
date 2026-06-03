@@ -35,7 +35,9 @@ export async function estimateGeneration(input: ImageGenerateInput): Promise<Est
   if (!model || !model.is_active) return { ok: false, message: '사용할 수 없는 모델입니다.' }
   const meta = toModelMeta(model)
   const billedUsd = estimateBilledUsd(meta, { prompt: parsed.data.prompt, count: parsed.data.count })
-  const fxRate = await getCurrentFxRate()
+  let fxRate: number
+  try { fxRate = await getCurrentFxRate() }
+  catch { return { ok: false, message: '환율 정보를 가져올 수 없습니다. 잠시 후 다시 시도해주세요.' } }
   return { ok: true, billedUsd, krw: usdToKrw(billedUsd, fxRate), fxRate }
 }
 
@@ -61,12 +63,16 @@ export async function createImageGeneration(input: ImageGenerateInput): Promise<
   if (!wallet) return { ok: false, code: 'UNKNOWN', message: '지갑을 찾을 수 없습니다.' }
 
   const billedUsd = estimateBilledUsd(meta, { prompt: d.prompt, count: d.count })
-  const fxRate = await getCurrentFxRate()
+  let fxRate: number
+  try { fxRate = await getCurrentFxRate() }
+  catch { return { ok: false, code: 'UNKNOWN', message: '환율 정보를 가져올 수 없습니다. 잠시 후 다시 시도해주세요.' } }
   const krw = usdToKrw(billedUsd, fxRate)
 
   // 1) Generation(PENDING) + 견적 차감(CHARGE)을 한 트랜잭션으로. 잔액부족 → 롤백.
   let generationId: string
   try {
+    // pgBouncer transaction mode에서도 interactive tx는 BEGIN~COMMIT 동안 서버 커넥션이
+    // pin되므로 wallet_apply_tx 내부의 FOR UPDATE 락이 보장된다. (DATABASE_URL=pooler ?pgbouncer=true)
     const created = await prisma.$transaction(async (tx) => {
       const gen = await tx.generation.create({
         data: {
@@ -101,11 +107,16 @@ export async function createImageGeneration(input: ImageGenerateInput): Promise<
     }))
     const paths = await uploadGenerationImages(uploads)
 
-    // 4) 정산 (이미지 고정가: actual==estimate → 차액 0; 일반화 위해 함수 사용)
+    // 4) 정산: 실제 > 견적이면 차액만 추가 차감. 이미지 고정가 모델은 extra=0(미발화).
+    //    정산 차감이 실패해도 생성 자체는 성공 처리한다(결과물은 이미 저장됨). 차액은 사후 보정 대상.
     const actualBilledKrw = krw
     const extra = computeSettlementKrw(krw, actualBilledKrw)
     if (extra > 0) {
-      await prisma.$executeRaw`SELECT wallet_apply_tx(${wallet.id}::text, 'CHARGE', ${-extra}::int, 'generation', ${generationId}::text, ${'정산 차액'})`
+      try {
+        await prisma.$executeRaw`SELECT wallet_apply_tx(${wallet.id}::text, 'CHARGE', ${-extra}::int, 'generation', ${generationId}::text, ${'정산 차액'})`
+      } catch (settleErr) {
+        console.error('[createImageGeneration] settlement charge failed (generation still succeeds):', generationId, settleErr)
+      }
     }
 
     const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
@@ -121,11 +132,20 @@ export async function createImageGeneration(input: ImageGenerateInput): Promise<
     return { ok: true, generationId }
   } catch (e) {
     console.error('[createImageGeneration] adapter/storage failed:', e)
-    await prisma.$executeRaw`SELECT wallet_apply_tx(${wallet.id}::text, 'REFUND', ${krw}::int, 'generation', ${generationId}::text, ${'생성 실패 환불'})`
-    await prisma.generation.update({
-      where: { id: generationId },
-      data: { status: 'FAILED', failed_reason: (e instanceof Error ? e.message : 'unknown').slice(0, 500), finished_at: new Date() },
-    })
+    try {
+      await prisma.$executeRaw`SELECT wallet_apply_tx(${wallet.id}::text, 'REFUND', ${krw}::int, 'generation', ${generationId}::text, ${'생성 실패 환불'})`
+    } catch (refundErr) {
+      console.error('[CRITICAL] REFUND FAILED — 사용자 차감 후 환불 실패:', generationId, refundErr)
+      // TODO: 운영 알림(Sentry 등) 연동
+    }
+    try {
+      await prisma.generation.update({
+        where: { id: generationId },
+        data: { status: 'FAILED', failed_reason: (e instanceof Error ? e.message : 'unknown').slice(0, 500), finished_at: new Date() },
+      })
+    } catch (updateErr) {
+      console.error('[createImageGeneration] FAILED 상태 업데이트 실패:', generationId, updateErr)
+    }
     return { ok: false, code: 'ADAPTER', message: '생성에 실패했습니다. 차감 금액은 환불되었습니다.' }
   }
 }
