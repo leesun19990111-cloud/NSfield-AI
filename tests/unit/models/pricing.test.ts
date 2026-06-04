@@ -23,6 +23,51 @@ const videoAudio: ModelMeta = {
     options: { allowed_durations_sec: [4, 6, 8], polling_interval_sec: 60 } },
 }
 
+// 해상도×화면비→픽셀, 토큰 = 면적×길이×fps/1024, 비용 = 토큰/1000×$/1k.
+// 720p 16:9 = 1280×720 = 921600px, 1080p = 1920×1080 = 2073600px.
+const videoToken: ModelMeta = {
+  id: 'seedance-2-i2v', kind: 'VIDEO', display_name: 'Seedance', provider: 'bytedance',
+  is_active: true, margin_pct: 10,
+  pricing_json: { kind: 'per_video_token', usd_per_1k_tokens: 0.0112, fps: 24,
+    options: { allowed_durations_sec: [4, 5, 6, 7, 8, 9, 10], polling_interval_sec: 60 } },
+}
+
+describe('per_video_token (해상도×화면비 토큰 과금)', () => {
+  it('720p 16:9 8초 → $1.93536 (921600×192/1024/1000×0.0112)', () => {
+    expect(estimateRawUsd(videoToken, { prompt: 'x', duration_sec: 8, resolution: '720p', ratio: '16:9' }))
+      .toBeCloseTo(1.93536, 5)
+  })
+
+  it('1080p 16:9 10초 → $5.4432', () => {
+    expect(estimateRawUsd(videoToken, { prompt: 'x', duration_sec: 10, resolution: '1080p', ratio: '16:9' }))
+      .toBeCloseTo(5.4432, 4)
+  })
+
+  it('720p 1:1 8초 → $1.08864 (정사각이라 16:9보다 저렴)', () => {
+    expect(estimateRawUsd(videoToken, { prompt: 'x', duration_sec: 8, resolution: '720p', ratio: '1:1' }))
+      .toBeCloseTo(1.08864, 5)
+  })
+
+  it('adaptive는 16:9로 간주', () => {
+    expect(estimateRawUsd(videoToken, { prompt: 'x', duration_sec: 8, resolution: '720p', ratio: 'adaptive' }))
+      .toBeCloseTo(1.93536, 5)
+  })
+
+  it('resolution/ratio 미지정이면 720p 16:9 폴백', () => {
+    expect(estimateRawUsd(videoToken, { prompt: 'x', duration_sec: 8 })).toBeCloseTo(1.93536, 5)
+  })
+
+  it('마진 10% 포함 720p 8초 → $2.1289', () => {
+    expect(estimateBilledUsd(videoToken, { prompt: 'x', duration_sec: 8, resolution: '720p', ratio: '16:9' }))
+      .toBeCloseTo(2.1289, 4)
+  })
+
+  it('미지원 길이는 예외', () => {
+    expect(() => estimateRawUsd(videoToken, { prompt: 'x', duration_sec: 15, resolution: '720p' }))
+      .toThrowError('UNSUPPORTED_DURATION')
+  })
+})
+
 describe('pricing', () => {
   it('이미지 장당 원가', () => {
     expect(estimateRawUsd(imageModel, { prompt: 'x', count: 2 })).toBeCloseTo(0.08)

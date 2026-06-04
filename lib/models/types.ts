@@ -5,6 +5,9 @@ export type GenerationParams = {
   count?: number
   duration_sec?: number
   generate_audio?: boolean
+  // 토큰 과금 영상의 출력 픽셀 산출용 (per_video_token)
+  resolution?: string
+  ratio?: string
   [key: string]: unknown
 }
 
@@ -19,6 +22,14 @@ export type PricingJson =
       options: { allowed_durations_sec: number[]; polling_interval_sec: number }
     }
   | { kind: 'per_video_fixed'; tiers: Record<string, number>; options: { allowed_durations_sec: number[]; polling_interval_sec: number } }
+  // 토큰 과금 영상(seedance 등): tokens = 출력픽셀(H×W) × 길이 × fps / 1024, 비용 = tokens/1000 × usd_per_1k_tokens.
+  // 출력 픽셀은 resolution(짧은 변)·ratio(긴변/짧은변)로 산출.
+  | {
+      kind: 'per_video_token'
+      usd_per_1k_tokens: number
+      fps: number
+      options: { allowed_durations_sec: number[]; polling_interval_sec: number }
+    }
 
 export type ModelMeta = {
   id: string
