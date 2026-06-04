@@ -41,8 +41,24 @@ describe('AtlasCloud 기준 단가 × 1.1 (엔진 마진)', () => {
     expect(estimateBilledUsd(meta('veo3.1-fast-t2v'), { prompt: 'x', duration_sec: 8 })).toBeCloseTo(0.704, 4)
   })
 
-  it('seedance-2-i2v per_second 0.112 × 10s → 1.232', () => {
-    expect(estimateBilledUsd(meta('seedance-2-i2v'), { prompt: 'x', duration_sec: 10 })).toBeCloseTo(1.232, 4)
+  it('seedance-2-i2v 토큰과금 720p 16:9 8s → 2.1289', () => {
+    expect(estimateBilledUsd(meta('seedance-2-i2v'), { prompt: 'x', duration_sec: 8, resolution: '720p', ratio: '16:9' }))
+      .toBeCloseTo(2.1289, 4)
+  })
+
+  it('seedance-2-i2v 토큰과금 1080p 16:9 10s → 5.9876', () => {
+    expect(estimateBilledUsd(meta('seedance-2-i2v'), { prompt: 'x', duration_sec: 10, resolution: '1080p', ratio: '16:9' }))
+      .toBeCloseTo(5.9876, 4)
+  })
+
+  it('seedance-2-t2v 토큰과금 720p 16:9 5s → 1.3306', () => {
+    expect(estimateBilledUsd(meta('seedance-2-t2v'), { prompt: 'x', duration_sec: 5, resolution: '720p', ratio: '16:9' }))
+      .toBeCloseTo(1.3306, 4)
+  })
+
+  it('seedance-2-ref2v 토큰과금 480p 1:1 4s → 0.2662', () => {
+    expect(estimateBilledUsd(meta('seedance-2-ref2v'), { prompt: 'x', duration_sec: 4, resolution: '480p', ratio: '1:1' }))
+      .toBeCloseTo(0.2662, 4)
   })
 
   it('veo3.1-t2v per_second 0.2 × 8s → 1.76 (오디오 OFF)', () => {

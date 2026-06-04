@@ -205,9 +205,12 @@ export const MODEL_CONFIGS: ModelConfig[] = [
     provider: 'bytedance',
     isActive: true,
     marginPct: 10,
+    // 토큰 과금: tokens = 출력픽셀(해상도×화면비) × 길이 × 24fps / 1024, $0.0112/1k tokens.
+    // 720p 16:9=$0.2419/s, 1080p=$0.5443/s. 영상입력 할인($0.00688)은 이미지 입력이라 미해당.
     pricing: {
-      kind: 'per_second',
-      usd_per_unit: 0.112,
+      kind: 'per_video_token',
+      usd_per_1k_tokens: 0.0112,
+      fps: 24,
       options: { allowed_durations_sec: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], polling_interval_sec: 60 },
     },
     fields: seedance2I2vFields,
@@ -343,7 +346,8 @@ export const MODEL_CONFIGS: ModelConfig[] = [
     provider: 'bytedance',
     isActive: true,
     marginPct: 10,
-    pricing: { kind: 'per_second', usd_per_unit: 0.112, options: { allowed_durations_sec: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], polling_interval_sec: 60 } },
+    // 토큰 과금(seedance): tokens = 출력픽셀 × 길이 × 24fps / 1024, $0.0112/1k tokens
+    pricing: { kind: 'per_video_token', usd_per_1k_tokens: 0.0112, fps: 24, options: { allowed_durations_sec: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], polling_interval_sec: 60 } },
     fields: seedanceT2vFields,
     durationParam: 'duration',
   },
@@ -357,7 +361,8 @@ export const MODEL_CONFIGS: ModelConfig[] = [
     provider: 'bytedance',
     isActive: true,
     marginPct: 10,
-    pricing: { kind: 'per_second', usd_per_unit: 0.112, options: { allowed_durations_sec: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], polling_interval_sec: 60 } },
+    // 토큰 과금(seedance): tokens = 출력픽셀 × 길이 × 24fps / 1024, $0.0112/1k tokens
+    pricing: { kind: 'per_video_token', usd_per_1k_tokens: 0.0112, fps: 24, options: { allowed_durations_sec: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], polling_interval_sec: 60 } },
     fields: seedanceRef2vFields,
     advancedFields: seedanceRef2vAdvanced,
     durationParam: 'duration',
