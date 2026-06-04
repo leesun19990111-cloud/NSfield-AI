@@ -7,6 +7,18 @@ export class UnsupportedDurationError extends Error {
   }
 }
 
+// per_second 모델의 유효 초당 단가. 오디오 단가(usd_per_unit_audio)가 선언되어 있고
+// generate_audio=true면 오디오 단가, 아니면 기본 단가. 가격 계산·breakdown 표시가 같은 값을 쓰도록 공유.
+export function perSecondUnitUsd(
+  p: { usd_per_unit: number; usd_per_unit_audio?: number },
+  params: { generate_audio?: boolean },
+): number {
+  if (params.generate_audio === true && p.usd_per_unit_audio !== undefined) {
+    return p.usd_per_unit_audio
+  }
+  return p.usd_per_unit
+}
+
 export function estimateRawUsd(model: ModelMeta, params: GenerationParams): number {
   const p = model.pricing_json
 
@@ -23,7 +35,7 @@ export function estimateRawUsd(model: ModelMeta, params: GenerationParams): numb
     case 'per_token':
       return p.usd_per_unit * (typeof params.tokens === 'number' ? params.tokens : 1)
     case 'per_second':
-      return p.usd_per_unit * (params.duration_sec ?? 0)
+      return perSecondUnitUsd(p, params) * (params.duration_sec ?? 0)
     case 'per_video_fixed': {
       const tier = p.tiers[String(params.duration_sec)]
       if (tier === undefined) throw new UnsupportedDurationError()
