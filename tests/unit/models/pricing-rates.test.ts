@@ -25,8 +25,18 @@ function meta(id: string): ModelMeta {
 
 // 기준 단가(AtlasCloud 실제 요금) × 1.1(엔진 margin_pct=10). roundCeilUsd(4) 때문에 toBeCloseTo로 검증.
 describe('AtlasCloud 기준 단가 × 1.1 (엔진 마진)', () => {
-  it('nanobanana-2-t2i per_image 0.08 → 0.088 (owner 확정 단가)', () => {
-    expect(estimateBilledUsd(meta('nanobanana-2-t2i'), { prompt: 'x' })).toBeCloseTo(0.088, 4)
+  it('nanobanana-2-t2i 해상도 tier 1k 0.08 → 0.088', () => {
+    expect(estimateBilledUsd(meta('nanobanana-2-t2i'), { prompt: 'x', resolution: '1k' })).toBeCloseTo(0.088, 4)
+  })
+
+  it('nanobanana-2-t2i 2k 0.12 → 0.132, 4k 0.16 → 0.176', () => {
+    expect(estimateBilledUsd(meta('nanobanana-2-t2i'), { prompt: 'x', resolution: '2k' })).toBeCloseTo(0.132, 4)
+    expect(estimateBilledUsd(meta('nanobanana-2-t2i'), { prompt: 'x', resolution: '4k' })).toBeCloseTo(0.176, 4)
+  })
+
+  it('nanobanana-2-t2i 1k + 웹검색 0.094 → 0.1034', () => {
+    expect(estimateBilledUsd(meta('nanobanana-2-t2i'), { prompt: 'x', resolution: '1k', enable_web_search: true }))
+      .toBeCloseTo(0.1034, 4)
   })
 
   it('nanobanana-pro-t2i per_image 0.14 → 0.154', () => {

@@ -161,7 +161,13 @@ export const MODEL_CONFIGS: ModelConfig[] = [
     provider: 'google',
     isActive: true,
     marginPct: 10,
-    pricing: { kind: 'per_image', usd_per_unit: 0.08 },
+    // 해상도별 단가(1k/2k/4k) + 검색 토글 추가과금 각 $0.014.
+    // enable_image_search는 아직 폼 필드 미노출이라 과금은 dormant(필드 추가 시 자동 적용).
+    pricing: {
+      kind: 'per_image_tiered',
+      resolution_usd: { '1k': 0.08, '2k': 0.12, '4k': 0.16 },
+      surcharges: { enable_web_search: 0.014, enable_image_search: 0.014 },
+    },
     fields: nanobanana2T2iFields,
     advancedFields: nanobanana2T2iAdvanced,
   },
