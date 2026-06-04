@@ -3,7 +3,7 @@
 import { requireUser } from '@/lib/auth/guards'
 import { prisma } from '@/lib/db/prisma'
 import { getCurrentFxRate } from '@/lib/fx/service'
-import { estimateBilledUsd, estimateRawUsd, UnsupportedDurationError } from '@/lib/models/pricing'
+import { estimateBilledUsd, estimateRawUsd, perSecondUnitUsd, UnsupportedDurationError } from '@/lib/models/pricing'
 import { usdToKrw } from '@/lib/money/format'
 import { getImageAdapter, getVideoAdapter } from '@/lib/models/registry'
 import { uploadGenerationImages } from '@/lib/storage/upload'
@@ -66,6 +66,8 @@ export async function estimateGeneration(input: EstimateInput): Promise<Estimate
     prompt: String(input.prompt),
     count: input.count,
     duration_sec: durationVal !== undefined ? Number(durationVal) : undefined,
+    // 오디오 단가 분기를 위해 generate_audio를 가격 계산까지 전달 (미지정/false → 기본 단가)
+    generate_audio: input.generate_audio === true,
   }
   let billedUsd: number
   let baseUsd: number
@@ -87,7 +89,7 @@ export async function estimateGeneration(input: EstimateInput): Promise<Estimate
 // baseUsd/billedUsd는 호출부가 이미 계산한 값을 넘겨받아 실제 차감과 동일한 반올림을 유지한다.
 function buildBreakdown(
   meta: ModelMeta,
-  params: { prompt: string; count?: number; duration_sec?: number },
+  params: { prompt: string; count?: number; duration_sec?: number; generate_audio?: boolean },
   baseUsd: number,
   billedUsd: number,
 ): EstimateBreakdown {
@@ -100,7 +102,9 @@ function buildBreakdown(
     }
     case 'per_second': {
       const units = params.duration_sec ?? 1
-      return { kind: 'per_second', unitUsd: p.usd_per_unit, units, unitLabel: '초', marginPct, baseUsd, billedUsd }
+      // 오디오 ON이면 오디오 단가가 표시되도록 유효 단가를 사용 (unitUsd*units == baseUsd 유지)
+      const unitUsd = perSecondUnitUsd(p, params)
+      return { kind: 'per_second', unitUsd, units, unitLabel: '초', marginPct, baseUsd, billedUsd }
     }
     case 'per_token': {
       return { kind: 'per_token', unitUsd: p.usd_per_unit, units: 1, unitLabel: '건', marginPct, baseUsd, billedUsd }
@@ -168,6 +172,8 @@ export async function createGeneration(
       prompt,
       count: typeof inputs.count === 'number' && inputs.count > 0 ? inputs.count : 1,
       duration_sec: durationVal !== undefined ? Number(durationVal) : undefined,
+      // 오디오 단가 분기. 검증 통과한 data 우선, 없으면 raw inputs 폴백.
+      generate_audio: (data.generate_audio ?? inputs.generate_audio) === true,
     })
   } catch (e) {
     if (e instanceof UnsupportedDurationError) return { ok: false, code: 'DURATION', message: '지원하지 않는 길이입니다.' }

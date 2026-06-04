@@ -64,6 +64,61 @@ describe('estimateGeneration breakdown', () => {
     expect(res.billedUsd).toBe(res.breakdown.billedUsd)
   })
 
+  it('per_second: generate_audio=true면 오디오 단가가 breakdown·견적에 반영', async () => {
+    findUnique.mockResolvedValue({
+      id: 'veo3.1-t2v',
+      kind: 'VIDEO',
+      display_name: 'Veo 3.1',
+      provider: 'google',
+      is_active: true,
+      margin_pct: 10,
+      pricing_json: {
+        kind: 'per_second',
+        usd_per_unit: 0.2,
+        usd_per_unit_audio: 0.4,
+        options: { allowed_durations_sec: [4, 6, 8], polling_interval_sec: 60 },
+      },
+    })
+    config.mockReturnValue({ id: 'veo3.1-t2v', durationParam: 'duration' })
+
+    const res = await estimateGeneration({
+      modelId: 'veo3.1-t2v', prompt: '바다', duration: 8, generate_audio: true,
+    })
+    expect(res.ok).toBe(true)
+    if (!res.ok) return
+    expect(res.breakdown.kind).toBe('per_second')
+    expect(res.breakdown.unitUsd).toBe(0.4) // 오디오 단가
+    expect(res.breakdown.units).toBe(8)
+    expect(res.breakdown.baseUsd).toBeCloseTo(3.2, 6)
+    expect(res.breakdown.billedUsd).toBeCloseTo(3.52, 6)
+    expect(res.billedUsd).toBe(res.breakdown.billedUsd)
+  })
+
+  it('per_second: generate_audio 미지정이면 기본 단가', async () => {
+    findUnique.mockResolvedValue({
+      id: 'veo3.1-t2v',
+      kind: 'VIDEO',
+      display_name: 'Veo 3.1',
+      provider: 'google',
+      is_active: true,
+      margin_pct: 10,
+      pricing_json: {
+        kind: 'per_second',
+        usd_per_unit: 0.2,
+        usd_per_unit_audio: 0.4,
+        options: { allowed_durations_sec: [4, 6, 8], polling_interval_sec: 60 },
+      },
+    })
+    config.mockReturnValue({ id: 'veo3.1-t2v', durationParam: 'duration' })
+
+    const res = await estimateGeneration({ modelId: 'veo3.1-t2v', prompt: '바다', duration: 8 })
+    expect(res.ok).toBe(true)
+    if (!res.ok) return
+    expect(res.breakdown.unitUsd).toBe(0.2) // 기본 단가
+    expect(res.breakdown.baseUsd).toBeCloseTo(1.6, 6)
+    expect(res.breakdown.billedUsd).toBeCloseTo(1.76, 6)
+  })
+
   it('per_image: 단가·장·마진 분해 (count 1)', async () => {
     findUnique.mockResolvedValue({
       id: 'mock-image',
