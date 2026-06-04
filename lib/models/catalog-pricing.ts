@@ -15,8 +15,13 @@ export function lowestBilledUsd(model: {
     margin_pct: Number(model.margin_pct),
     pricing_json: model.pricing_json as PricingJson,
   }
-  if (meta.kind === 'IMAGE') return estimateBilledUsd(meta, { prompt: 'x', count: 1 })
   const p = meta.pricing_json
+  if (p.kind === 'per_image_tiered') {
+    // 최저가 = 가장 싼 해상도, 추가과금 토글 미적용
+    const cheapest = Object.entries(p.resolution_usd).reduce((a, b) => (b[1] < a[1] ? b : a))
+    return estimateBilledUsd(meta, { prompt: 'x', count: 1, resolution: cheapest[0] })
+  }
+  if (meta.kind === 'IMAGE') return estimateBilledUsd(meta, { prompt: 'x', count: 1 })
   if (p.kind === 'per_video_fixed') {
     // 최저가는 가장 싼 tier 기준. allowed_durations_sec의 최소값이 tier에 없을 수 있으므로
     // (예: 허용 [4..15]·tier {5,10,15}) tier 키만으로 산정한다.

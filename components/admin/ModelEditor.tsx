@@ -6,7 +6,7 @@ import { updateModel } from '@/lib/actions/admin-models'
 import { estimateRawUsd, estimateBilledUsd } from '@/lib/models/pricing'
 import { formatUsdPrecise, formatKrw } from '@/components/common/MoneyText'
 import { usdToKrw } from '@/lib/money/format'
-import type { ModelMeta, PricingJson } from '@/lib/models/types'
+import type { ModelMeta, PricingJson, GenerationParams } from '@/lib/models/types'
 
 type EditorModel = {
   id: string
@@ -51,6 +51,22 @@ function buildSimRows(
         error: null,
       }
     }
+    if (p.kind === 'per_image_tiered') {
+      // 해상도별 1장 단가 + (추가과금 토글이 있으면) 전체 토글 ON 행 1개
+      const resolutions = Object.keys(p.resolution_usd)
+      const rows: SimRow[] = resolutions.map((res) => {
+        const params = { prompt: 'x', count: 1, resolution: res }
+        return { label: `${res} 1장`, baseUsd: estimateRawUsd(meta, params), billedUsd: estimateBilledUsd(meta, params) }
+      })
+      const cheapest = resolutions[0]
+      const surKeys = p.surcharges ? Object.keys(p.surcharges) : []
+      if (cheapest && surKeys.length > 0) {
+        const params: GenerationParams = { prompt: 'x', count: 1, resolution: cheapest }
+        for (const k of surKeys) params[k] = true
+        rows.push({ label: `${cheapest} + ${surKeys.join('+')}`, baseUsd: estimateRawUsd(meta, params), billedUsd: estimateBilledUsd(meta, params) })
+      }
+      return { rows, error: null }
+    }
     // per_video_token: 원가가 해상도×화면비에 따라 달라지므로 대표 길이로 해상도별 비교 표시
     if (p.kind === 'per_video_token') {
       const durs = p.options.allowed_durations_sec
@@ -87,6 +103,10 @@ function detectBaseRate(p: PricingJson): { kind: string; hint: string } {
   if (p.kind === 'per_video_fixed') return { kind: p.kind, hint: 'tiers (구간별 고정가)' }
   if (p.kind === 'per_video_token') {
     return { kind: p.kind, hint: `${formatUsdPrecise(p.usd_per_1k_tokens)}/1k tokens · ${p.fps}fps` }
+  }
+  if (p.kind === 'per_image_tiered') {
+    const tiers = Object.entries(p.resolution_usd).map(([k, v]) => `${k} ${formatUsdPrecise(v)}`).join(' / ')
+    return { kind: p.kind, hint: tiers }
   }
   return { kind: p.kind, hint: `usd_per_unit ${formatUsdPrecise(p.usd_per_unit)}` }
 }

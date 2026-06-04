@@ -36,6 +36,23 @@ describe('pricingJsonSchema', () => {
     expect(r.success).toBe(false)
   })
 
+  it('valid per_image_tiered passes', () => {
+    const r = pricingJsonSchema.safeParse({
+      kind: 'per_image_tiered',
+      resolution_usd: { '1k': 0.08, '2k': 0.12, '4k': 0.16 },
+      surcharges: { enable_web_search: 0.014, enable_image_search: 0.014 },
+    })
+    expect(r.success).toBe(true)
+  })
+
+  it('per_image_tiered without surcharges passes', () => {
+    const r = pricingJsonSchema.safeParse({
+      kind: 'per_image_tiered',
+      resolution_usd: { '1k': 0.08 },
+    })
+    expect(r.success).toBe(true)
+  })
+
   it('rejects missing kind', () => {
     const r = pricingJsonSchema.safeParse({ usd_per_unit: 0.04 })
     expect(r.success).toBe(false)

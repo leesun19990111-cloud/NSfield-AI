@@ -16,6 +16,18 @@ describe('lowestBilledUsd', () => {
     expect(u).toBeCloseTo(0.88, 4) // 0.2×4×1.1
   })
 
+  it('per_image_tiered: 최저 해상도 단가, 부가옵션 제외', () => {
+    const u = lowestBilledUsd({
+      kind: 'IMAGE', margin_pct: 10,
+      pricing_json: {
+        kind: 'per_image_tiered',
+        resolution_usd: { '1k': 0.08, '2k': 0.12, '4k': 0.16 },
+        surcharges: { enable_web_search: 0.014 },
+      },
+    })
+    expect(u).toBeCloseTo(0.088, 4) // 1k 0.08 × 1.1, 토글 미적용
+  })
+
   it('per_video_token: 최소 길이 + 최저 해상도/비율(480p 1:1)', () => {
     const u = lowestBilledUsd({
       kind: 'VIDEO', margin_pct: 10,
