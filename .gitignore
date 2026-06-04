@@ -43,6 +43,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+.dev-server.log
+.tunnel.log
+.tunnel.log.out
 
 # env files
 .env*.local

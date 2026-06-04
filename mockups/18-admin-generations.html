@@ -1,0 +1,59 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>생성 내역 · NS Admin</title><link rel="stylesheet" href="style.css"></head><body>
+<div class="admin-shell">
+  <aside class="sidebar">
+    <div class="logo">NS Admin</div>
+    <nav>
+      <a class="sidebar-item" href="12-admin-dashboard.html">대시보드</a>
+      <a class="sidebar-item" href="13-admin-topups.html">충전<span class="badge-count">3</span></a>
+      <a class="sidebar-item" href="16-admin-users.html">사용자</a>
+      <a class="sidebar-item" href="14-admin-models.html">모델</a>
+      <a class="sidebar-item active" href="18-admin-generations.html">생성내역</a>
+      <a class="sidebar-item" href="20-admin-fx-rates.html">환율</a>
+      <a class="sidebar-item" href="21-admin-audit.html">감사로그</a>
+    </nav>
+    <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border)">
+      <a class="sidebar-item" href="10-wallet.html">← 사용자 화면</a>
+    </div>
+  </aside>
+  <main class="admin-main">
+    <div class="page-head">
+      <div class="eyebrow">관리자</div>
+      <h1 class="h1">생성 내역</h1>
+    </div>
+
+    <div class="row wrap" style="gap:12px;margin-bottom:16px">
+      <input class="input" placeholder="사용자·모델·ID 검색" style="width:220px">
+      <div class="seg">
+        <span class="seg-item on">전체</span>
+        <span class="seg-item">이미지</span>
+        <span class="seg-item">영상</span>
+      </div>
+      <div class="seg">
+        <span class="seg-item on">상태 전체</span>
+        <span class="seg-item">완료</span>
+        <span class="seg-item">생성중</span>
+        <span class="seg-item">실패</span>
+        <span class="seg-item">환불</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <table class="table">
+        <thead><tr><th>일시</th><th>사용자</th><th>모델</th><th>모달리티</th><th class="num">차감액</th><th>상태</th><th>상세</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">06-04 14:22</td><td>김민수</td><td>Seedance 2</td><td>i2v</td><td class="num mono">$0.616</td><td><span class="badge badge-success">완료</span></td><td><a class="btn btn-sm btn-surface" href="19-admin-generation-detail.html">보기</a></td></tr>
+          <tr><td class="mono">06-04 14:18</td><td>이서연</td><td>Nano Banana Pro</td><td>t2i</td><td class="num mono">$0.154</td><td><span class="badge badge-success">완료</span></td><td><a class="btn btn-sm btn-surface" href="19-admin-generation-detail.html">보기</a></td></tr>
+          <tr><td class="mono">06-04 14:15</td><td>박지훈</td><td>Veo 3.1</td><td>t2v</td><td class="num mono">$1.10</td><td><span class="badge badge-warning">생성중</span><div class="bar" style="width:80px;margin-top:6px"><span style="width:60%"></span></div></td><td><a class="btn btn-sm btn-surface" href="19-admin-generation-detail.html">보기</a></td></tr>
+          <tr><td class="mono">06-04 13:59</td><td>정유진</td><td>Kling v3.0 Pro</td><td>i2v</td><td class="num mono">$0.616</td><td><span class="badge badge-success">완료</span></td><td><a class="btn btn-sm btn-surface" href="19-admin-generation-detail.html">보기</a></td></tr>
+          <tr><td class="mono">06-04 13:47</td><td>최도현</td><td>Seedream v4.5</td><td>t2i</td><td class="num mono">$0.044</td><td><span class="badge badge-danger">실패</span></td><td><a class="btn btn-sm btn-surface" href="19-admin-generation-detail.html">보기</a></td></tr>
+          <tr><td class="mono">06-04 13:40</td><td>오서준</td><td>Seedance 2</td><td>ref2v</td><td class="num mono">$1.232</td><td><span class="badge badge-info">환불됨</span></td><td><a class="btn btn-sm btn-surface" href="19-admin-generation-detail.html">보기</a></td></tr>
+          <tr><td class="mono">06-04 13:31</td><td>한지민</td><td>GPT Image 2.0</td><td>t2i</td><td class="num mono">$0.011</td><td><span class="badge badge-success">완료</span></td><td><a class="btn btn-sm btn-surface" href="19-admin-generation-detail.html">보기</a></td></tr>
+          <tr><td class="mono">06-04 13:20</td><td>이서연</td><td>Veo 3.1 Fast</td><td>i2v</td><td class="num mono">$0.44</td><td><span class="badge badge-success">완료</span></td><td><a class="btn btn-sm btn-surface" href="19-admin-generation-detail.html">보기</a></td></tr>
+          <tr><td class="mono">06-04 13:08</td><td>정유진</td><td>Kling v3.0 Standard</td><td>t2v</td><td class="num mono">$0.462</td><td><span class="badge badge-warning">생성중</span><div class="bar" style="width:80px;margin-top:6px"><span style="width:30%"></span></div></td><td><a class="btn btn-sm btn-surface" href="19-admin-generation-detail.html">보기</a></td></tr>
+          <tr><td class="mono">06-04 12:55</td><td>김민수</td><td>Nano Banana 2</td><td>ref2i</td><td class="num mono">$0.088</td><td><span class="badge badge-success">완료</span></td><td><a class="btn btn-sm btn-surface" href="19-admin-generation-detail.html">보기</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+</body></html>

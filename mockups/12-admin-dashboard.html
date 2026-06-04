@@ -1,0 +1,116 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>대시보드 · NS Admin</title><link rel="stylesheet" href="style.css"></head><body>
+<div class="admin-shell">
+  <aside class="sidebar">
+    <div class="logo">NS Admin</div>
+    <nav>
+      <a class="sidebar-item active" href="12-admin-dashboard.html">대시보드</a>
+      <a class="sidebar-item" href="13-admin-topups.html">충전<span class="badge-count">3</span></a>
+      <a class="sidebar-item" href="16-admin-users.html">사용자</a>
+      <a class="sidebar-item" href="14-admin-models.html">모델</a>
+      <a class="sidebar-item" href="18-admin-generations.html">생성내역</a>
+      <a class="sidebar-item" href="20-admin-fx-rates.html">환율</a>
+      <a class="sidebar-item" href="21-admin-audit.html">감사로그</a>
+    </nav>
+    <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border)">
+      <a class="sidebar-item" href="10-wallet.html">← 사용자 화면</a>
+    </div>
+  </aside>
+  <main class="admin-main">
+    <div class="page-head">
+      <div class="eyebrow">관리자</div>
+      <h1 class="h1">대시보드</h1>
+    </div>
+
+    <div class="grid grid-4" style="margin-bottom:24px">
+      <div class="card">
+        <div class="kpi-label">총 잔액 (미사용 충전)</div>
+        <div class="kpi" style="margin-top:6px">$1,572.17</div>
+        <div class="small dim" style="margin-top:6px">사용자 24명 합계</div>
+      </div>
+      <div class="card">
+        <div class="kpi-label">이번 달 매출 (마진)</div>
+        <div class="kpi" style="margin-top:6px">$56.05</div>
+        <div class="small dim" style="margin-top:6px">+10% 마진 합산</div>
+        <div class="small dim" style="margin-top:2px">원화 입금 누계 ₩4.2M</div>
+      </div>
+      <div class="card">
+        <div class="kpi-label">대기 충전</div>
+        <div class="row" style="margin-top:6px;gap:8px">
+          <div class="kpi">3</div><span class="badge badge-warning">건 대기</span>
+        </div>
+        <div class="small dim" style="margin-top:6px"><a href="13-admin-topups.html" style="color:var(--accent-hover)">승인 대기 처리 →</a></div>
+      </div>
+      <div class="card">
+        <div class="kpi-label">오늘 생성</div>
+        <div class="kpi" style="margin-top:6px">142</div>
+        <div class="small dim" style="margin-top:6px">건 (이미지 98 · 영상 44)</div>
+      </div>
+    </div>
+
+    <div class="split" style="margin-bottom:24px">
+      <div class="card">
+        <h2 class="h2" style="margin-bottom:12px">최근 생성</h2>
+        <table class="table">
+          <thead><tr><th>모델</th><th>사용자</th><th class="num">금액</th><th>상태</th></tr></thead>
+          <tbody>
+            <tr><td>Seedance (i2v)</td><td>김민수</td><td class="num mono">$0.616</td><td><span class="badge badge-success">완료</span></td></tr>
+            <tr><td>Nano Banana Pro (t2i)</td><td>이서연</td><td class="num mono">$0.154</td><td><span class="badge badge-success">완료</span></td></tr>
+            <tr><td>Veo 3.1 (t2v)</td><td>박지훈</td><td class="num mono">$1.10</td><td><span class="badge badge-warning">생성중</span></td></tr>
+            <tr><td>Kling v3.0 Pro (i2v)</td><td>정유진</td><td class="num mono">$1.232</td><td><span class="badge badge-success">완료</span></td></tr>
+            <tr><td>Seedream v4.5 (t2i)</td><td>최도현</td><td class="num mono">$0.044</td><td><span class="badge badge-danger">실패</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h2 class="h2" style="margin-bottom:12px">처리 대기</h2>
+        <div class="stack" style="gap:12px">
+          <div class="row-between">
+            <div>
+              <div class="h3">충전 승인</div>
+              <div class="small dim">사용자 입금 확인 대기</div>
+            </div>
+            <div class="row" style="gap:8px">
+              <span class="badge badge-warning">3건</span>
+              <a class="btn btn-primary btn-sm" href="13-admin-topups.html">충전 관리</a>
+            </div>
+          </div>
+          <div class="divide"></div>
+          <div class="row-between">
+            <div>
+              <div class="h3">실패 환불</div>
+              <div class="small dim">생성 실패 자동 환불</div>
+            </div>
+            <span class="badge badge-muted">0건</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="h2" style="margin-bottom:16px">모델별 사용 (이번 달)</h2>
+      <div class="stack" style="gap:14px">
+        <div>
+          <div class="row-between small" style="margin-bottom:6px"><span>Seedance</span><span class="muted mono">38%</span></div>
+          <div class="bar"><span style="width:38%"></span></div>
+        </div>
+        <div>
+          <div class="row-between small" style="margin-bottom:6px"><span>Veo 3.1</span><span class="muted mono">24%</span></div>
+          <div class="bar"><span style="width:24%"></span></div>
+        </div>
+        <div>
+          <div class="row-between small" style="margin-bottom:6px"><span>Nano Banana</span><span class="muted mono">20%</span></div>
+          <div class="bar"><span style="width:20%"></span></div>
+        </div>
+        <div>
+          <div class="row-between small" style="margin-bottom:6px"><span>Kling</span><span class="muted mono">12%</span></div>
+          <div class="bar"><span style="width:12%"></span></div>
+        </div>
+        <div>
+          <div class="row-between small" style="margin-bottom:6px"><span>기타</span><span class="muted mono">6%</span></div>
+          <div class="bar"><span style="width:6%"></span></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</body></html>

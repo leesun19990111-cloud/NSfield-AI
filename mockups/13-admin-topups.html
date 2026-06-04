@@ -1,0 +1,90 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>충전 요청 · NS Admin</title><link rel="stylesheet" href="style.css"></head><body>
+<div class="admin-shell">
+  <aside class="sidebar">
+    <div class="logo">NS Admin</div>
+    <nav>
+      <a class="sidebar-item" href="12-admin-dashboard.html">대시보드</a>
+      <a class="sidebar-item active" href="13-admin-topups.html">충전<span class="badge-count">3</span></a>
+      <a class="sidebar-item" href="16-admin-users.html">사용자</a>
+      <a class="sidebar-item" href="14-admin-models.html">모델</a>
+      <a class="sidebar-item" href="18-admin-generations.html">생성내역</a>
+      <a class="sidebar-item" href="20-admin-fx-rates.html">환율</a>
+      <a class="sidebar-item" href="21-admin-audit.html">감사로그</a>
+    </nav>
+    <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border)">
+      <a class="sidebar-item" href="10-wallet.html">← 사용자 화면</a>
+    </div>
+  </aside>
+  <main class="admin-main">
+    <div class="page-head">
+      <div class="eyebrow">관리자</div>
+      <h1 class="h1">충전 요청</h1>
+    </div>
+
+    <div class="seg" style="margin-bottom:16px">
+      <span class="seg-item on">대기 중</span>
+      <span class="seg-item">승인됨</span>
+      <span class="seg-item">반려됨</span>
+      <span class="seg-item">전체</span>
+    </div>
+
+    <div class="alert alert-info" style="margin-bottom:16px">승인 시 입금하신 원화를 그 시점 환율로 환산해 달러로 충전합니다. 환율은 자동(환율 페이지) 값이 기본이며 승인 직전 조정할 수 있습니다. 적용 환율은 시세 + 수수료 버퍼(관리자 설정, 현재 12%)입니다. 승인 직전 조정 가능.</div>
+
+    <div class="card">
+      <table class="table">
+        <thead><tr><th>일시</th><th>사용자</th><th>입금자명</th><th class="num">원화 입금</th><th class="num">적용 환율</th><th class="num">충전(달러)</th><th>상태</th><th>처리</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="mono">06-04 14:21</td><td>김민수</td><td>민수</td>
+            <td class="num mono">₩50,000</td>
+            <td class="num"><input class="input mono" value="1,723" style="width:80px;text-align:right;padding:4px 8px"><div class="small dim">시세1,538+12%</div></td>
+            <td class="num mono">$29.02</td>
+            <td><span class="badge badge-warning">대기</span></td>
+            <td><div class="row" style="gap:6px"><button class="btn btn-success btn-sm">승인</button><button class="btn btn-danger btn-sm">반려</button></div></td>
+          </tr>
+          <tr>
+            <td class="mono">06-04 13:58</td><td>이서연</td><td>서연</td>
+            <td class="num mono">₩100,000</td>
+            <td class="num"><input class="input mono" value="1,723" style="width:80px;text-align:right;padding:4px 8px"><div class="small dim">시세1,538+12%</div></td>
+            <td class="num mono">$58.04</td>
+            <td><span class="badge badge-warning">대기</span></td>
+            <td><div class="row" style="gap:6px"><button class="btn btn-success btn-sm">승인</button><button class="btn btn-danger btn-sm">반려</button></div></td>
+          </tr>
+          <tr>
+            <td class="mono">06-04 11:32</td><td>박지훈</td><td>지훈</td>
+            <td class="num mono">₩30,000</td>
+            <td class="num"><input class="input mono" value="1,723" style="width:80px;text-align:right;padding:4px 8px"><div class="small dim">시세1,538+12%</div></td>
+            <td class="num mono">$17.41</td>
+            <td><span class="badge badge-warning">대기</span></td>
+            <td><div class="row" style="gap:6px"><button class="btn btn-success btn-sm">승인</button><button class="btn btn-danger btn-sm">반려</button></div></td>
+          </tr>
+          <tr>
+            <td class="mono">06-03 18:10</td><td>정유진</td><td>유진</td>
+            <td class="num mono">₩50,000</td>
+            <td class="num mono">1,533</td>
+            <td class="num mono">$32.62</td>
+            <td><span class="badge badge-success">승인됨</span></td>
+            <td class="small dim">관리자 이선 · 06-03 18:15</td>
+          </tr>
+          <tr>
+            <td class="mono">06-03 15:44</td><td>최도현</td><td>도현</td>
+            <td class="num mono">₩200,000</td>
+            <td class="num mono">1,534</td>
+            <td class="num mono">$130.38</td>
+            <td><span class="badge badge-success">승인됨</span></td>
+            <td class="small dim">관리자 이선 · 06-03 16:02</td>
+          </tr>
+          <tr>
+            <td class="mono">06-02 09:21</td><td>한지민</td><td>김지민</td>
+            <td class="num mono">₩20,000</td>
+            <td class="num mono dim">—</td>
+            <td class="num mono dim">—</td>
+            <td><span class="badge badge-danger">반려됨</span></td>
+            <td class="small dim">관리자 이선 · 입금 미확인</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+</body></html>

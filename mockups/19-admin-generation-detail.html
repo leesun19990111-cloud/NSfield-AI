@@ -1,0 +1,79 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>생성 상세 · NS Admin</title><link rel="stylesheet" href="style.css"></head><body>
+<div class="admin-shell">
+  <aside class="sidebar">
+    <div class="logo">NS Admin</div>
+    <nav>
+      <a class="sidebar-item" href="12-admin-dashboard.html">대시보드</a>
+      <a class="sidebar-item" href="13-admin-topups.html">충전<span class="badge-count">3</span></a>
+      <a class="sidebar-item" href="16-admin-users.html">사용자</a>
+      <a class="sidebar-item" href="14-admin-models.html">모델</a>
+      <a class="sidebar-item active" href="18-admin-generations.html">생성내역</a>
+      <a class="sidebar-item" href="20-admin-fx-rates.html">환율</a>
+      <a class="sidebar-item" href="21-admin-audit.html">감사로그</a>
+    </nav>
+    <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border)">
+      <a class="sidebar-item" href="10-wallet.html">← 사용자 화면</a>
+    </div>
+  </aside>
+  <main class="admin-main">
+    <div class="page-head">
+      <div class="small muted"><a href="18-admin-generations.html" style="color:var(--text-muted)">생성내역</a> / #gen_8f3a</div>
+      <h1 class="h1" style="margin-top:6px">생성 상세</h1>
+    </div>
+
+    <div class="split">
+      <div class="stack" style="gap:24px">
+        <div class="card">
+          <div class="thumb video thumb-16" style="margin-bottom:12px"><img src="img/seedance-2-i2v.webp" alt="" loading="lazy"><span class="play">▶</span></div>
+          <div class="row-between">
+            <span class="badge badge-success">완료</span>
+            <button class="btn btn-ghost btn-sm">원본 응답 보기</button>
+          </div>
+        </div>
+        <div class="card-2">
+          <h3 class="h3" style="margin-bottom:10px">입력 파라미터 (params_json)</h3>
+<pre class="mono small" style="margin:0;white-space:pre-wrap;color:var(--text-muted)">{
+  "prompt": "노을 지는 해변을 천천히 걷는 여성, 시네마틱",
+  "image_url": "https://cdn.nsfield.kr/u/minsu/in_3a9f.jpg",
+  "ratio": "16:9",
+  "duration": 5,
+  "resolution": "720p",
+  "generate_audio": true
+}</pre>
+        </div>
+      </div>
+
+      <div class="stack" style="gap:24px">
+        <div class="card">
+          <h2 class="h2" style="margin-bottom:12px">상세 정보</h2>
+          <table class="table">
+            <tbody>
+              <tr><td class="muted">ID</td><td class="num mono">gen_8f3a2c10</td></tr>
+              <tr><td class="muted">사용자</td><td class="num">김민수</td></tr>
+              <tr><td class="muted">모델</td><td class="num">Seedance 2 (i2v)</td></tr>
+              <tr><td class="muted">atlasModel</td><td class="num mono small">bytedance/seedance-2.0/image-to-video</td></tr>
+              <tr><td class="muted">차감액</td><td class="num mono">$0.616</td></tr>
+              <tr><td class="muted">길이</td><td class="num">5초</td></tr>
+              <tr><td class="muted">해상도</td><td class="num">720p</td></tr>
+              <tr><td class="muted">외부 작업ID</td><td class="num mono small">task_4b9e7f21a</td></tr>
+              <tr><td class="muted">생성 시작</td><td class="num mono">06-04 14:22:03</td></tr>
+              <tr><td class="muted">생성 완료</td><td class="num mono">06-04 14:22:41</td></tr>
+              <tr><td class="muted">폴링 횟수</td><td class="num mono">8회</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <h2 class="h2" style="margin-bottom:12px">거래</h2>
+          <table class="table">
+            <thead><tr><th>유형</th><th class="num">금액</th><th>시각</th></tr></thead>
+            <tbody>
+              <tr><td><span class="badge badge-muted">wallet_apply_tx</span> 차감</td><td class="num mono">−$0.616</td><td class="mono">14:22:03</td></tr>
+            </tbody>
+          </table>
+          <p class="dim small" style="margin-top:10px">완료 생성으로 환불 없음. 실패 시 동일 금액 환불 트랜잭션이 추가됩니다.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</body></html>

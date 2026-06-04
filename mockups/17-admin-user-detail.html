@@ -1,0 +1,96 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>사용자 상세 · NS Admin</title><link rel="stylesheet" href="style.css"></head><body>
+<div class="admin-shell">
+  <aside class="sidebar">
+    <div class="logo">NS Admin</div>
+    <nav>
+      <a class="sidebar-item" href="12-admin-dashboard.html">대시보드</a>
+      <a class="sidebar-item" href="13-admin-topups.html">충전<span class="badge-count">3</span></a>
+      <a class="sidebar-item active" href="16-admin-users.html">사용자</a>
+      <a class="sidebar-item" href="14-admin-models.html">모델</a>
+      <a class="sidebar-item" href="18-admin-generations.html">생성내역</a>
+      <a class="sidebar-item" href="20-admin-fx-rates.html">환율</a>
+      <a class="sidebar-item" href="21-admin-audit.html">감사로그</a>
+    </nav>
+    <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border)">
+      <a class="sidebar-item" href="10-wallet.html">← 사용자 화면</a>
+    </div>
+  </aside>
+  <main class="admin-main">
+    <div class="page-head">
+      <div class="small muted"><a href="16-admin-users.html" style="color:var(--text-muted)">사용자</a> / 김민수</div>
+      <h1 class="h1" style="margin-top:6px">김민수</h1>
+    </div>
+
+    <div class="card card-pad-lg" style="margin-bottom:24px">
+      <div class="row-between wrap">
+        <div class="stack" style="gap:6px">
+          <div class="h3 mono">minsu.kim@gmail.com</div>
+          <div class="row" style="gap:10px">
+            <span class="muted">표시이름 김민수</span>
+            <span class="badge badge-muted">USER</span>
+            <span class="dim small">가입 2026-04-11</span>
+          </div>
+        </div>
+        <div class="row" style="gap:16px">
+          <div style="text-align:right">
+            <div class="kpi-label">현재 잔액</div>
+            <div class="kpi">$83.49</div>
+          </div>
+          <div class="stack" style="gap:8px">
+            <button class="btn btn-surface btn-sm">잔액 조정</button>
+            <button class="btn btn-danger btn-sm">정지</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-3" style="margin-bottom:24px">
+      <div class="card"><div class="kpi-label">총 충전</div><div class="kpi" style="margin-top:6px">$174.11</div><div class="small dim" style="margin-top:4px">₩300,000 입금</div></div>
+      <div class="card"><div class="kpi-label">총 사용</div><div class="kpi" style="margin-top:6px">$111.57</div></div>
+      <div class="card"><div class="kpi-label">생성</div><div class="kpi" style="margin-top:6px">37건</div></div>
+    </div>
+
+    <div class="grid grid-2" style="margin-bottom:24px">
+      <div class="card">
+        <h2 class="h2" style="margin-bottom:12px">충전 내역</h2>
+        <table class="table">
+          <thead><tr><th>일시</th><th class="num">원화 입금</th><th class="num">달러 충전</th><th>상태</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">06-04 14:21</td><td class="num mono">₩50,000</td><td class="num mono dim">대기</td><td><span class="badge badge-warning">대기</span></td></tr>
+            <tr><td class="mono">05-20 10:02</td><td class="num mono">₩100,000</td><td class="num mono">+$58.04</td><td><span class="badge badge-success">승인됨</span></td></tr>
+            <tr><td class="mono">04-30 16:45</td><td class="num mono">₩150,000</td><td class="num mono">+$87.06</td><td><span class="badge badge-success">승인됨</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h2 class="h2" style="margin-bottom:12px">최근 생성</h2>
+        <table class="table">
+          <thead><tr><th>모델</th><th class="num">금액</th><th>상태</th></tr></thead>
+          <tbody>
+            <tr><td>Seedance 2 (i2v)</td><td class="num mono">$0.616</td><td><span class="badge badge-success">완료</span></td></tr>
+            <tr><td>Nano Banana Pro (t2i)</td><td class="num mono">$0.154</td><td><span class="badge badge-success">완료</span></td></tr>
+            <tr><td>Veo 3.1 Fast (t2v)</td><td class="num mono">$0.44</td><td><span class="badge badge-danger">실패</span></td></tr>
+            <tr><td>Seedream v4.5 (t2i)</td><td class="num mono">$0.044</td><td><span class="badge badge-success">완료</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="h2" style="margin-bottom:16px">잔액 조정</h2>
+      <div class="alert alert-warn" style="margin-bottom:16px">조정은 감사 로그에 기록됩니다(달러 기준). 음수 조정도 가능합니다.</div>
+      <div class="row wrap" style="gap:16px;align-items:flex-end">
+        <div style="flex:1;min-width:180px">
+          <label class="label">금액 ($, 음수 가능)</label>
+          <input class="input mono" placeholder="예: 10.00 또는 -3.25">
+        </div>
+        <div style="flex:2;min-width:220px">
+          <label class="label">사유</label>
+          <input class="input" placeholder="예: 프로모션 지급 / 중복충전 회수">
+        </div>
+        <button class="btn btn-primary">조정 적용</button>
+      </div>
+    </div>
+  </main>
+</div>
+</body></html>

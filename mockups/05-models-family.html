@@ -1,0 +1,108 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Veo 3.1 — NS Field</title><link rel="stylesheet" href="style.css"></head><body>
+
+<header class="topbar"><div class="topbar-inner">
+  <nav class="nav"><a class="brand" href="10-wallet.html">NS Field<span class="dot">.</span></a>
+    <a class="nav-link active" href="04-models.html">모델</a><a class="nav-link" href="08-library.html">라이브러리</a></nav>
+  <div class="row" style="gap:14px"><span class="balance-chip">$&nbsp;<span class="won">83.49</span></span>
+    <a class="nav-link" href="12-admin-dashboard.html" style="color:var(--accent)">관리자</a>
+    <a class="nav-link" href="#">민수</a></div>
+</div></header>
+
+<div class="container">
+
+  <p class="dim small" style="margin-bottom:8px"><a href="04-models.html" style="color:var(--text-dim)">모델</a> / Veo 3.1</p>
+  <div class="page-head">
+    <h1 class="h1">Veo 3.1</h1>
+    <p class="muted" style="margin-top:6px">Google의 고품질 영상 생성 모델. 오디오 생성을 지원하며 텍스트·이미지·참조 입력을 받습니다.</p>
+  </div>
+
+  <!-- 텍스트 → 영상 -->
+  <section style="margin-bottom:28px">
+    <h3 class="h3" style="margin-bottom:12px">텍스트 → 영상</h3>
+    <div class="grid grid-3">
+
+      <div class="card stack" style="gap:12px">
+        <div class="thumb video thumb-16"><img src="img/veo3.1-t2v.webp" alt="" loading="lazy"><span class="play">▶</span></div>
+        <div class="row-between">
+          <h3 class="h3">veo3.1 t2v</h3>
+          <span class="badge badge-accent">오디오</span>
+        </div>
+        <p class="muted small">최고 품질. 오디오 동시 생성 지원.</p>
+        <div class="row-between">
+          <span class="price-tag"><span class="price-won">$0.22</span><span class="muted small" style="font-weight:400">/초</span></span>
+        </div>
+        <a class="btn btn-primary btn-sm" href="06-model-detail.html">생성하기</a>
+      </div>
+
+      <div class="card stack" style="gap:12px">
+        <div class="thumb video thumb-16"><img src="img/veo3.1-fast-t2v.webp" alt="" loading="lazy"><span class="play">▶</span></div>
+        <div class="row-between">
+          <h3 class="h3">veo3.1-fast t2v</h3>
+          <span class="badge badge-muted">빠름·저가</span>
+        </div>
+        <p class="muted small">빠른 생성과 저렴한 단가의 경량 버전.</p>
+        <div class="row-between">
+          <span class="price-tag"><span class="price-won">$0.088</span><span class="muted small" style="font-weight:400">/초</span></span>
+        </div>
+        <a class="btn btn-primary btn-sm" href="07-generate.html">생성하기</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 이미지 → 영상 -->
+  <section style="margin-bottom:28px">
+    <h3 class="h3" style="margin-bottom:12px">이미지 → 영상</h3>
+    <div class="grid grid-3">
+
+      <div class="card stack" style="gap:12px">
+        <div class="thumb video thumb-16"><img src="img/veo3.1-i2v.webp" alt="" loading="lazy"><span class="play">▶</span></div>
+        <h3 class="h3">veo3.1 i2v</h3>
+        <p class="muted small">정지 이미지를 자연스러운 영상으로 변환.</p>
+        <div class="row-between">
+          <span class="price-tag"><span class="price-won">$0.22</span><span class="muted small" style="font-weight:400">/초</span></span>
+        </div>
+        <a class="btn btn-primary btn-sm" href="07-generate.html">생성하기</a>
+      </div>
+
+      <div class="card stack" style="gap:12px">
+        <div class="thumb video thumb-16"><img src="img/veo3.1-fast-i2v.webp" alt="" loading="lazy"><span class="play">▶</span></div>
+        <div class="row-between">
+          <h3 class="h3">veo3.1-fast i2v</h3>
+          <span class="badge badge-muted">빠름·저가</span>
+        </div>
+        <p class="muted small">이미지 기반 영상 생성의 경량 버전.</p>
+        <div class="row-between">
+          <span class="price-tag"><span class="price-won">$0.088</span><span class="muted small" style="font-weight:400">/초</span></span>
+        </div>
+        <a class="btn btn-primary btn-sm" href="07-generate.html">생성하기</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 참조 → 영상 -->
+  <section style="margin-bottom:28px">
+    <h3 class="h3" style="margin-bottom:12px">참조 → 영상</h3>
+    <div class="grid grid-3">
+
+      <div class="card stack" style="gap:12px">
+        <div class="thumb video thumb-16"><img src="img/veo3.1-ref2v.webp" alt="" loading="lazy"><span class="play">▶</span></div>
+        <div class="row-between">
+          <h3 class="h3">veo3.1 ref2v</h3>
+          <span class="badge badge-info">8초 고정·다중참조</span>
+        </div>
+        <p class="muted small">여러 참조 이미지로 일관된 8초 영상 생성.</p>
+        <div class="row-between">
+          <span class="price-tag"><span class="price-won">$0.22</span><span class="muted small" style="font-weight:400">/초</span></span>
+        </div>
+        <a class="btn btn-primary btn-sm" href="07-generate.html">생성하기</a>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="alert alert-info">표시된 모든 가격은 오너 확정 단가 기준입니다. 일부 변형은 준비 중이며 순차 활성화됩니다.</div>
+
+</div>
+</body></html>

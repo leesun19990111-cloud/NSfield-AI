@@ -1,0 +1,103 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>지갑 — NS Field</title><link rel="stylesheet" href="style.css"></head><body>
+<header class="topbar"><div class="topbar-inner">
+  <nav class="nav"><a class="brand" href="10-wallet.html">NS Field<span class="dot">.</span></a>
+    <a class="nav-link" href="04-models.html">모델</a><a class="nav-link" href="08-library.html">라이브러리</a></nav>
+  <div class="row" style="gap:14px"><span class="balance-chip">$&nbsp;<span class="won">83.49</span></span>
+    <a class="nav-link" href="12-admin-dashboard.html" style="color:var(--accent)">관리자</a>
+    <a class="nav-link" href="#">민수</a></div>
+</div></header>
+
+<div class="container">
+  <div class="page-head">
+    <h1 class="h1">지갑</h1>
+  </div>
+
+  <!-- hero balance -->
+  <div class="card card-pad-lg" style="margin-bottom:24px">
+    <div class="row-between wrap" style="gap:20px">
+      <div>
+        <div class="kpi-label">현재 잔액</div>
+        <div class="kpi" style="font-size:40px;margin:4px 0">$83.49</div>
+        <div class="small dim">달러 잔액 · 원화로 입금하면 환율 환산해 충전</div>
+      </div>
+      <div class="row wrap" style="gap:10px">
+        <a class="btn btn-primary btn-lg" href="11-topup.html">충전하기</a>
+        <a class="btn btn-ghost btn-lg" href="04-models.html">생성하러 가기</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- stat cards -->
+  <div class="grid grid-3" style="margin-bottom:32px">
+    <div class="card-2">
+      <div class="kpi-label">이번 달 사용액</div>
+      <div class="kpi" style="font-size:22px;margin-top:6px">$27.50</div>
+    </div>
+    <div class="card-2">
+      <div class="kpi-label">생성 횟수</div>
+      <div class="kpi" style="font-size:22px;margin-top:6px">37건</div>
+    </div>
+    <div class="card-2">
+      <div class="row-between">
+        <div>
+          <div class="kpi-label">대기 중 충전</div>
+          <div class="kpi" style="font-size:22px;margin-top:6px">1건</div>
+        </div>
+        <span class="badge badge-warning">대기 중</span>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="h2" style="margin-bottom:16px">거래 내역</h2>
+  <div class="card" style="padding:0">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>일시</th>
+          <th>유형</th>
+          <th>내용</th>
+          <th class="num">금액</th>
+          <th class="num">잔액</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="mono dim">2026-06-04 09:12</td>
+          <td><span class="badge badge-success">승인됨</span></td>
+          <td>충전 <span class="small dim">· ₩50,000 입금 @1,723</span></td>
+          <td class="num mono" style="color:var(--success)">+$29.02</td>
+          <td class="num mono">$83.49</td>
+        </tr>
+        <tr>
+          <td class="mono dim">2026-06-04 14:22</td>
+          <td><span class="badge badge-muted">차감</span></td>
+          <td>생성 차감 · Seedance 영상</td>
+          <td class="num mono">−$0.616</td>
+          <td class="num mono">$54.47</td>
+        </tr>
+        <tr>
+          <td class="mono dim">2026-06-04 13:58</td>
+          <td><span class="badge badge-muted">차감</span></td>
+          <td>생성 차감 · Nano Banana 이미지</td>
+          <td class="num mono">−$0.088</td>
+          <td class="num mono">$55.09</td>
+        </tr>
+        <tr>
+          <td class="mono dim">2026-06-03 16:48</td>
+          <td><span class="badge badge-info">생성 실패 환불</span></td>
+          <td>환불 · Veo 3.1</td>
+          <td class="num mono" style="color:var(--success)">+$0.22</td>
+          <td class="num mono">$55.17</td>
+        </tr>
+        <tr>
+          <td class="mono dim">2026-06-01 10:05</td>
+          <td><span class="badge badge-success">승인됨</span></td>
+          <td>충전 <span class="small dim">· ₩100,000 입금 @1,723</span></td>
+          <td class="num mono" style="color:var(--success)">+$58.04</td>
+          <td class="num mono">$54.95</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body></html>
