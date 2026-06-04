@@ -161,7 +161,13 @@ export const MODEL_CONFIGS: ModelConfig[] = [
     provider: 'google',
     isActive: true,
     marginPct: 10,
-    pricing: { kind: 'per_image', usd_per_unit: 0.08 },
+    // 해상도별 단가(1k/2k/4k) + 검색 토글 추가과금 각 $0.014.
+    // enable_image_search는 아직 폼 필드 미노출이라 과금은 dormant(필드 추가 시 자동 적용).
+    pricing: {
+      kind: 'per_image_tiered',
+      resolution_usd: { '1k': 0.08, '2k': 0.12, '4k': 0.16 },
+      surcharges: { enable_web_search: 0.014, enable_image_search: 0.014 },
+    },
     fields: nanobanana2T2iFields,
     advancedFields: nanobanana2T2iAdvanced,
   },
@@ -175,7 +181,11 @@ export const MODEL_CONFIGS: ModelConfig[] = [
     provider: 'google',
     isActive: true,
     marginPct: 10,
-    pricing: { kind: 'per_image', usd_per_unit: 0.08 },
+    // nano-banana-2 동일 해상도 단가(1k/2k/4k). ref2i는 검색 토글 없어 추가과금 없음.
+    pricing: {
+      kind: 'per_image_tiered',
+      resolution_usd: { '1k': 0.08, '2k': 0.12, '4k': 0.16 },
+    },
     fields: nanobanana2Ref2iFields,
     advancedFields: nanobanana2Ref2iAdvanced,
   },
@@ -189,7 +199,8 @@ export const MODEL_CONFIGS: ModelConfig[] = [
     provider: 'google',
     isActive: true,
     marginPct: 10,
-    pricing: { kind: 'per_second', usd_per_unit: 0.2, options: { allowed_durations_sec: [4, 6, 8], polling_interval_sec: 60 } },
+    // AtlasCloud: 영상만 $0.20/sec, 영상+오디오 $0.40/sec (generate_audio 기본 ON)
+    pricing: { kind: 'per_second', usd_per_unit: 0.2, usd_per_unit_audio: 0.4, options: { allowed_durations_sec: [4, 6, 8], polling_interval_sec: 60 } },
     fields: veo31T2vFields,
     advancedFields: veo31T2vAdvanced,
     durationParam: 'duration',
@@ -204,9 +215,12 @@ export const MODEL_CONFIGS: ModelConfig[] = [
     provider: 'bytedance',
     isActive: true,
     marginPct: 10,
+    // 토큰 과금: tokens = 출력픽셀(해상도×화면비) × 길이 × 24fps / 1024, $0.0112/1k tokens.
+    // 720p 16:9=$0.2419/s, 1080p=$0.5443/s. 영상입력 할인($0.00688)은 이미지 입력이라 미해당.
     pricing: {
-      kind: 'per_second',
-      usd_per_unit: 0.112,
+      kind: 'per_video_token',
+      usd_per_1k_tokens: 0.0112,
+      fps: 24,
       options: { allowed_durations_sec: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], polling_interval_sec: 60 },
     },
     fields: seedance2I2vFields,
@@ -240,7 +254,12 @@ export const MODEL_CONFIGS: ModelConfig[] = [
     provider: 'google',
     isActive: true,
     marginPct: 10,
-    pricing: { kind: 'per_image', usd_per_unit: 0.14 },
+    // 해상도별 단가: 1k·2k 동일 $0.14, 4k $0.24. 웹검색 토글 +$0.014(pro는 image search 없음).
+    pricing: {
+      kind: 'per_image_tiered',
+      resolution_usd: { '1k': 0.14, '2k': 0.14, '4k': 0.24 },
+      surcharges: { enable_web_search: 0.014 },
+    },
     fields: nanobananaProT2iFields,
     advancedFields: nanobananaProT2iAdvanced,
   },
@@ -296,7 +315,8 @@ export const MODEL_CONFIGS: ModelConfig[] = [
     provider: 'google',
     isActive: true,
     marginPct: 10,
-    pricing: { kind: 'per_second', usd_per_unit: 0.2, options: { allowed_durations_sec: [4, 6, 8], polling_interval_sec: 60 } },
+    // AtlasCloud: 영상만 $0.20/sec, 영상+오디오 $0.40/sec (generate_audio 기본 ON)
+    pricing: { kind: 'per_second', usd_per_unit: 0.2, usd_per_unit_audio: 0.4, options: { allowed_durations_sec: [4, 6, 8], polling_interval_sec: 60 } },
     fields: veo31I2vFields,
     advancedFields: veo31I2vAdvanced,
     durationParam: 'duration',
@@ -341,7 +361,8 @@ export const MODEL_CONFIGS: ModelConfig[] = [
     provider: 'bytedance',
     isActive: true,
     marginPct: 10,
-    pricing: { kind: 'per_second', usd_per_unit: 0.112, options: { allowed_durations_sec: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], polling_interval_sec: 60 } },
+    // 토큰 과금(seedance): tokens = 출력픽셀 × 길이 × 24fps / 1024, $0.0112/1k tokens
+    pricing: { kind: 'per_video_token', usd_per_1k_tokens: 0.0112, fps: 24, options: { allowed_durations_sec: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], polling_interval_sec: 60 } },
     fields: seedanceT2vFields,
     durationParam: 'duration',
   },
@@ -355,7 +376,8 @@ export const MODEL_CONFIGS: ModelConfig[] = [
     provider: 'bytedance',
     isActive: true,
     marginPct: 10,
-    pricing: { kind: 'per_second', usd_per_unit: 0.112, options: { allowed_durations_sec: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], polling_interval_sec: 60 } },
+    // 토큰 과금(seedance): tokens = 출력픽셀 × 길이 × 24fps / 1024, $0.0112/1k tokens
+    pricing: { kind: 'per_video_token', usd_per_1k_tokens: 0.0112, fps: 24, options: { allowed_durations_sec: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], polling_interval_sec: 60 } },
     fields: seedanceRef2vFields,
     advancedFields: seedanceRef2vAdvanced,
     durationParam: 'duration',

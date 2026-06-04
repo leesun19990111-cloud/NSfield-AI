@@ -1,6 +1,6 @@
 {
   "version": "3.0",
-  "lastUpdated": "2026-06-03T08:53:01.929Z",
+  "lastUpdated": "2026-06-04T03:01:43.309Z",
   "activeFeatures": [
     "NSfield",
     "unit",
@@ -27,7 +27,8 @@
     "topup",
     "audit",
     "topups",
-    "e2e"
+    "e2e",
+    "catalog"
   ],
   "primaryFeature": "NSfield",
   "features": {
@@ -40,9 +41,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-06-03T06:54:25.071Z",
-        "lastUpdated": "2026-06-03T08:52:42.479Z"
+        "lastUpdated": "2026-06-04T02:41:54.094Z"
       },
-      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\playwright.config.ts"
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\lib\\models\\catalog-pricing.ts"
     },
     "unit": {
       "phase": "do",
@@ -53,9 +54,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-06-03T06:54:26.654Z",
-        "lastUpdated": "2026-06-03T08:15:26.367Z"
+        "lastUpdated": "2026-06-04T03:01:07.508Z"
       },
-      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\tests\\unit\\models\\pricing.test.ts"
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\tests\\unit\\models\\pricing-rates.test.ts"
     },
     "supabase": {
       "phase": "do",
@@ -118,9 +119,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-06-03T08:04:46.848Z",
-        "lastUpdated": "2026-06-03T08:47:02.549Z"
+        "lastUpdated": "2026-06-04T02:40:30.468Z"
       },
-      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\lib\\actions\\admin-topup.ts"
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\lib\\actions\\generation.ts"
     },
     "callback": {
       "phase": "do",
@@ -222,9 +223,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-06-03T08:11:14.376Z",
-        "lastUpdated": "2026-06-03T08:47:29.449Z"
+        "lastUpdated": "2026-06-04T02:42:41.345Z"
       },
-      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\components\\admin\\TopupQueue.tsx"
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\components\\admin\\ModelEditor.tsx"
     },
     "money": {
       "phase": "do",
@@ -313,9 +314,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-06-03T08:39:48.153Z",
-        "lastUpdated": "2026-06-03T08:40:10.693Z"
+        "lastUpdated": "2026-06-04T02:41:41.281Z"
       },
-      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\lib\\validation\\topup.ts"
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\lib\\validation\\model.ts"
     },
     "topup": {
       "phase": "do",
@@ -368,6 +369,19 @@
         "lastUpdated": "2026-06-03T08:53:01.926Z"
       },
       "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\tests\\e2e\\topup-flow.spec.ts"
+    },
+    "catalog": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-06-04T01:52:56.119Z",
+        "lastUpdated": "2026-06-04T03:01:43.306Z"
+      },
+      "lastFile": "c:\\Users\\이태양\\Desktop\\개인자료\\6. 프로젝트별\\NSfield\\lib\\models\\catalog\\registry.ts"
     }
   },
   "pipeline": {
@@ -378,7 +392,7 @@
   "session": {
     "startedAt": "2026-05-27T03:22:28.164Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-06-03T08:53:01.929Z"
+    "lastActivity": "2026-06-04T03:01:43.309Z"
   },
   "history": [
     {
@@ -828,6 +842,342 @@
     {
       "timestamp": "2026-06-03T08:53:01.929Z",
       "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T01:49:37.095Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T01:49:48.477Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T01:50:11.995Z",
+      "feature": "NSfield",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T01:50:17.858Z",
+      "feature": "NSfield",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T01:50:29.492Z",
+      "feature": "NSfield",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T01:52:26.163Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T01:52:56.122Z",
+      "feature": "catalog",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T01:53:04.324Z",
+      "feature": "catalog",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T01:54:04.753Z",
+      "feature": "actions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T01:54:33.913Z",
+      "feature": "actions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T01:54:40.162Z",
+      "feature": "actions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T01:54:50.133Z",
+      "feature": "actions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T01:54:57.332Z",
+      "feature": "actions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:13:39.825Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:14:01.812Z",
+      "feature": "NSfield",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:14:08.223Z",
+      "feature": "NSfield",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:14:18.939Z",
+      "feature": "NSfield",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:14:29.088Z",
+      "feature": "NSfield",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:15:10.513Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:15:28.416Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:16:02.881Z",
+      "feature": "catalog",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:16:09.757Z",
+      "feature": "catalog",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:16:57.860Z",
+      "feature": "actions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:17:20.566Z",
+      "feature": "actions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:17:28.903Z",
+      "feature": "actions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:17:38.789Z",
+      "feature": "actions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:17:50.225Z",
+      "feature": "actions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:17:59.848Z",
+      "feature": "actions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:18:55.913Z",
+      "feature": "validation",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:19:06.466Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:19:25.784Z",
+      "feature": "validation",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:19:33.265Z",
+      "feature": "NSfield",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:19:57.547Z",
+      "feature": "admin",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:20:07.523Z",
+      "feature": "admin",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:20:14.389Z",
+      "feature": "admin",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:20:55.824Z",
+      "feature": "NSfield",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:36:57.220Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:37:17.775Z",
+      "feature": "NSfield",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:37:25.703Z",
+      "feature": "NSfield",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:38:12.063Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:38:42.875Z",
+      "feature": "catalog",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:39:14.632Z",
+      "feature": "actions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:39:56.919Z",
+      "feature": "actions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:40:14.627Z",
+      "feature": "actions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:40:21.172Z",
+      "feature": "actions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:40:30.472Z",
+      "feature": "actions",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:41:06.976Z",
+      "feature": "validation",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:41:15.752Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:41:41.284Z",
+      "feature": "validation",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:41:54.096Z",
+      "feature": "NSfield",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:42:23.738Z",
+      "feature": "admin",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:42:34.502Z",
+      "feature": "admin",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T02:42:41.348Z",
+      "feature": "admin",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T03:01:07.510Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T03:01:35.836Z",
+      "feature": "catalog",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-06-04T03:01:43.309Z",
+      "feature": "catalog",
       "phase": "do",
       "action": "updated"
     }

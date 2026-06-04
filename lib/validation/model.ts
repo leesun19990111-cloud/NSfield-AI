@@ -17,6 +17,12 @@ export const pricingJsonSchema = z.discriminatedUnion('kind', [
     options: z.record(z.string(), z.unknown()).optional(),
   }),
   z.object({
+    kind: z.literal('per_image_tiered'),
+    resolution_usd: z.record(z.string(), z.number().nonnegative()),
+    surcharges: z.record(z.string(), z.number().nonnegative()).optional(),
+    options: z.record(z.string(), z.unknown()).optional(),
+  }),
+  z.object({
     kind: z.literal('per_second'),
     usd_per_unit: z.number().nonnegative(),
     options: optionsSchema,
@@ -24,6 +30,12 @@ export const pricingJsonSchema = z.discriminatedUnion('kind', [
   z.object({
     kind: z.literal('per_video_fixed'),
     tiers: z.record(z.string(), z.number().nonnegative()),
+    options: optionsSchema,
+  }),
+  z.object({
+    kind: z.literal('per_video_token'),
+    usd_per_1k_tokens: z.number().nonnegative(),
+    fps: z.number().positive(),
     options: optionsSchema,
   }),
 ])
