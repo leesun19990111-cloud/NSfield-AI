@@ -189,7 +189,8 @@ export const MODEL_CONFIGS: ModelConfig[] = [
     provider: 'google',
     isActive: true,
     marginPct: 10,
-    pricing: { kind: 'per_second', usd_per_unit: 0.2, options: { allowed_durations_sec: [4, 6, 8], polling_interval_sec: 60 } },
+    // AtlasCloud: 영상만 $0.20/sec, 영상+오디오 $0.40/sec (generate_audio 기본 ON)
+    pricing: { kind: 'per_second', usd_per_unit: 0.2, usd_per_unit_audio: 0.4, options: { allowed_durations_sec: [4, 6, 8], polling_interval_sec: 60 } },
     fields: veo31T2vFields,
     advancedFields: veo31T2vAdvanced,
     durationParam: 'duration',
@@ -296,7 +297,8 @@ export const MODEL_CONFIGS: ModelConfig[] = [
     provider: 'google',
     isActive: true,
     marginPct: 10,
-    pricing: { kind: 'per_second', usd_per_unit: 0.2, options: { allowed_durations_sec: [4, 6, 8], polling_interval_sec: 60 } },
+    // AtlasCloud: 영상만 $0.20/sec, 영상+오디오 $0.40/sec (generate_audio 기본 ON)
+    pricing: { kind: 'per_second', usd_per_unit: 0.2, usd_per_unit_audio: 0.4, options: { allowed_durations_sec: [4, 6, 8], polling_interval_sec: 60 } },
     fields: veo31I2vFields,
     advancedFields: veo31I2vAdvanced,
     durationParam: 'duration',

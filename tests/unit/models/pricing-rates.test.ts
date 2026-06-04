@@ -45,8 +45,18 @@ describe('AtlasCloud 기준 단가 × 1.1 (엔진 마진)', () => {
     expect(estimateBilledUsd(meta('seedance-2-i2v'), { prompt: 'x', duration_sec: 10 })).toBeCloseTo(1.232, 4)
   })
 
-  it('veo3.1-t2v per_second 0.2 × 8s → 1.76', () => {
+  it('veo3.1-t2v per_second 0.2 × 8s → 1.76 (오디오 OFF)', () => {
     expect(estimateBilledUsd(meta('veo3.1-t2v'), { prompt: 'x', duration_sec: 8 })).toBeCloseTo(1.76, 4)
+  })
+
+  it('veo3.1-t2v 오디오 ON 0.4 × 8s → 3.52', () => {
+    expect(estimateBilledUsd(meta('veo3.1-t2v'), { prompt: 'x', duration_sec: 8, generate_audio: true }))
+      .toBeCloseTo(3.52, 4)
+  })
+
+  it('veo3.1-i2v 오디오 ON 0.4 × 8s → 3.52', () => {
+    expect(estimateBilledUsd(meta('veo3.1-i2v'), { prompt: 'x', duration_sec: 8, generate_audio: true }))
+      .toBeCloseTo(3.52, 4)
   })
 
   it('kling-v3-std-t2v per_second 0.084 × 5s → 0.462', () => {
