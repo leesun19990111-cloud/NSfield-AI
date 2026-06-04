@@ -26,7 +26,7 @@ function toModelMeta(m: {
 }
 
 export type EstimateBreakdown = {
-  kind: 'per_image' | 'per_second' | 'per_token' | 'per_video_fixed' | 'per_video_token'
+  kind: 'per_image' | 'per_image_tiered' | 'per_second' | 'per_token' | 'per_video_fixed' | 'per_video_token'
   unitUsd: number // base usd_per_unit (per_video_fixed: tier price)
   units: number // count (image) or duration_sec (video); 1 if N/A
   unitLabel: string // '장' | '초' | '건'
@@ -62,7 +62,9 @@ export async function estimateGeneration(input: EstimateInput): Promise<Estimate
   const durationVal = config.durationParam
     ? input[config.durationParam] ?? input.duration_sec
     : input.duration_sec
-  const params = {
+  // 모든 입력을 가격 계산에 전달(검색 토글 등 모델별 추가과금 param 포함). 특수 필드는 아래서 정규화.
+  const params: GenerationParams = {
+    ...(input as Record<string, unknown>),
     prompt: String(input.prompt),
     count: input.count,
     duration_sec: durationVal !== undefined ? Number(durationVal) : undefined,
@@ -102,6 +104,12 @@ function buildBreakdown(
     case 'per_image': {
       const units = params.count ?? 1
       return { kind: 'per_image', unitUsd: p.usd_per_unit, units, unitLabel: '장', marginPct, baseUsd, billedUsd }
+    }
+    case 'per_image_tiered': {
+      // 해상도·검색토글에 따라 장당 단가가 달라지므로 유효 장당 단가(baseUsd/장)로 표시.
+      const units = params.count ?? 1
+      const unitUsd = units > 0 ? baseUsd / units : baseUsd
+      return { kind: 'per_image_tiered', unitUsd, units, unitLabel: '장', marginPct, baseUsd, billedUsd }
     }
     case 'per_second': {
       const units = params.duration_sec ?? 1
@@ -180,6 +188,8 @@ export async function createGeneration(
     const resolutionVal = data.resolution ?? inputs.resolution
     const ratioVal = data.ratio ?? inputs.ratio
     billedUsd = estimateBilledUsd(meta, {
+      // 검증 통과한 입력 전체를 전달(검색 토글 등 추가과금 param 포함). 특수 필드는 아래서 정규화.
+      ...(data as Record<string, unknown>),
       prompt,
       count: typeof inputs.count === 'number' && inputs.count > 0 ? inputs.count : 1,
       duration_sec: durationVal !== undefined ? Number(durationVal) : undefined,

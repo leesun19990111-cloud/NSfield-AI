@@ -157,6 +157,39 @@ describe('estimateGeneration breakdown', () => {
     expect(lo.breakdown.baseUsd).toBeLessThan(hi.breakdown.baseUsd)
   })
 
+  it('per_image_tiered: resolution + 검색토글이 호출부→pricing까지 전달', async () => {
+    findUnique.mockResolvedValue({
+      id: 'nanobanana-2-t2i',
+      kind: 'IMAGE',
+      display_name: 'Nano Banana 2',
+      provider: 'google',
+      is_active: true,
+      margin_pct: 10,
+      pricing_json: {
+        kind: 'per_image_tiered',
+        resolution_usd: { '1k': 0.08, '2k': 0.12, '4k': 0.16 },
+        surcharges: { enable_web_search: 0.014, enable_image_search: 0.014 },
+      },
+    })
+    config.mockReturnValue({ id: 'nanobanana-2-t2i' })
+
+    const res = await estimateGeneration({
+      modelId: 'nanobanana-2-t2i', prompt: '고양이', resolution: '2k', enable_web_search: true,
+    })
+    expect(res.ok).toBe(true)
+    if (!res.ok) return
+    expect(res.breakdown.kind).toBe('per_image_tiered')
+    expect(res.breakdown.unitLabel).toBe('장')
+    expect(res.breakdown.baseUsd).toBeCloseTo(0.134, 6) // 0.12 + 0.014(웹검색)
+    expect(res.breakdown.billedUsd).toBeCloseTo(0.1474, 6)
+    expect(res.billedUsd).toBe(res.breakdown.billedUsd)
+
+    const plain = await estimateGeneration({ modelId: 'nanobanana-2-t2i', prompt: '고양이', resolution: '1k' })
+    if (!plain.ok) return
+    expect(plain.breakdown.baseUsd).toBeCloseTo(0.08, 6)
+    expect(plain.breakdown.baseUsd).toBeLessThan(res.breakdown.baseUsd)
+  })
+
   it('per_image: 단가·장·마진 분해 (count 1)', async () => {
     findUnique.mockResolvedValue({
       id: 'mock-image',
