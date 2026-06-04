@@ -13,6 +13,13 @@ export type GenerationParams = {
 
 export type PricingJson =
   | { kind: 'per_image'; usd_per_unit: number; options?: Record<string, unknown> }
+  // 해상도별 기본 단가 + 토글 추가과금(예: nano-banana-2: 1k/2k/4k = 0.08/0.12/0.16, 웹·이미지 검색 각 +0.014)
+  | {
+      kind: 'per_image_tiered'
+      resolution_usd: Record<string, number>
+      surcharges?: Record<string, number>
+      options?: Record<string, unknown>
+    }
   | { kind: 'per_token'; usd_per_unit: number; options?: Record<string, unknown> }
   | {
       kind: 'per_second'

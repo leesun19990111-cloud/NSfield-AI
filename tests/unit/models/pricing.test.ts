@@ -68,6 +68,50 @@ describe('per_video_token (해상도×화면비 토큰 과금)', () => {
   })
 })
 
+// 해상도별 기본 단가 + 토글 추가과금(웹/이미지 검색). nano-banana-2 t2i.
+const imageTiered: ModelMeta = {
+  id: 'nanobanana-2-t2i', kind: 'IMAGE', display_name: 'Nano Banana 2', provider: 'google',
+  is_active: true, margin_pct: 10,
+  pricing_json: {
+    kind: 'per_image_tiered',
+    resolution_usd: { '1k': 0.08, '2k': 0.12, '4k': 0.16 },
+    surcharges: { enable_web_search: 0.014, enable_image_search: 0.014 },
+  },
+}
+
+describe('per_image_tiered (해상도 tier + 토글 추가과금)', () => {
+  it('1k 기본 → $0.08', () => {
+    expect(estimateRawUsd(imageTiered, { prompt: 'x', resolution: '1k' })).toBeCloseTo(0.08, 6)
+  })
+
+  it('2k → $0.12, 4k → $0.16', () => {
+    expect(estimateRawUsd(imageTiered, { prompt: 'x', resolution: '2k' })).toBeCloseTo(0.12, 6)
+    expect(estimateRawUsd(imageTiered, { prompt: 'x', resolution: '4k' })).toBeCloseTo(0.16, 6)
+  })
+
+  it('1k + 웹검색 → $0.094', () => {
+    expect(estimateRawUsd(imageTiered, { prompt: 'x', resolution: '1k', enable_web_search: true }))
+      .toBeCloseTo(0.094, 6)
+  })
+
+  it('2k + 웹검색 + 이미지검색 → $0.148', () => {
+    expect(estimateRawUsd(imageTiered, { prompt: 'x', resolution: '2k', enable_web_search: true, enable_image_search: true }))
+      .toBeCloseTo(0.148, 6)
+  })
+
+  it('resolution 미지정이면 최고가(4k)로 폴백해 과소청구 방지', () => {
+    expect(estimateRawUsd(imageTiered, { prompt: 'x' })).toBeCloseTo(0.16, 6)
+  })
+
+  it('count 2 (1k) → $0.16', () => {
+    expect(estimateRawUsd(imageTiered, { prompt: 'x', resolution: '1k', count: 2 })).toBeCloseTo(0.16, 6)
+  })
+
+  it('마진 10% 포함 4k → $0.176', () => {
+    expect(estimateBilledUsd(imageTiered, { prompt: 'x', resolution: '4k' })).toBeCloseTo(0.176, 6)
+  })
+})
+
 describe('pricing', () => {
   it('이미지 장당 원가', () => {
     expect(estimateRawUsd(imageModel, { prompt: 'x', count: 2 })).toBeCloseTo(0.08)

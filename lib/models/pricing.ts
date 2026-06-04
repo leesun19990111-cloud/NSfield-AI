@@ -47,6 +47,16 @@ export function estimateRawUsd(model: ModelMeta, params: GenerationParams): numb
   switch (p.kind) {
     case 'per_image':
       return p.usd_per_unit * (params.count ?? 1)
+    case 'per_image_tiered': {
+      // 해상도별 기본 단가. 미지정/미지원이면 최고가로 폴백(과소청구 방지).
+      const res = typeof params.resolution === 'string' ? params.resolution : ''
+      const base = p.resolution_usd[res] ?? Math.max(...Object.values(p.resolution_usd))
+      let perImage = base
+      for (const [param, fee] of Object.entries(p.surcharges ?? {})) {
+        if (params[param] === true) perImage += fee
+      }
+      return perImage * (params.count ?? 1)
+    }
     case 'per_token':
       return p.usd_per_unit * (typeof params.tokens === 'number' ? params.tokens : 1)
     case 'per_second':
