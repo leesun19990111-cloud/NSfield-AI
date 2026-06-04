@@ -26,7 +26,7 @@ function toModelMeta(m: {
 }
 
 export type EstimateBreakdown = {
-  kind: 'per_image' | 'per_second' | 'per_token' | 'per_video_fixed'
+  kind: 'per_image' | 'per_second' | 'per_token' | 'per_video_fixed' | 'per_video_token'
   unitUsd: number // base usd_per_unit (per_video_fixed: tier price)
   units: number // count (image) or duration_sec (video); 1 if N/A
   unitLabel: string // '장' | '초' | '건'
@@ -68,6 +68,9 @@ export async function estimateGeneration(input: EstimateInput): Promise<Estimate
     duration_sec: durationVal !== undefined ? Number(durationVal) : undefined,
     // 오디오 단가 분기를 위해 generate_audio를 가격 계산까지 전달 (미지정/false → 기본 단가)
     generate_audio: input.generate_audio === true,
+    // 토큰 과금 영상(per_video_token)의 출력 픽셀 산출용
+    resolution: typeof input.resolution === 'string' ? input.resolution : undefined,
+    ratio: typeof input.ratio === 'string' ? input.ratio : undefined,
   }
   let billedUsd: number
   let baseUsd: number
@@ -89,7 +92,7 @@ export async function estimateGeneration(input: EstimateInput): Promise<Estimate
 // baseUsd/billedUsd는 호출부가 이미 계산한 값을 넘겨받아 실제 차감과 동일한 반올림을 유지한다.
 function buildBreakdown(
   meta: ModelMeta,
-  params: { prompt: string; count?: number; duration_sec?: number; generate_audio?: boolean },
+  params: { prompt: string; count?: number; duration_sec?: number; generate_audio?: boolean; resolution?: string; ratio?: string },
   baseUsd: number,
   billedUsd: number,
 ): EstimateBreakdown {
@@ -105,6 +108,12 @@ function buildBreakdown(
       // 오디오 ON이면 오디오 단가가 표시되도록 유효 단가를 사용 (unitUsd*units == baseUsd 유지)
       const unitUsd = perSecondUnitUsd(p, params)
       return { kind: 'per_second', unitUsd, units, unitLabel: '초', marginPct, baseUsd, billedUsd }
+    }
+    case 'per_video_token': {
+      // 해상도·화면비에 따라 초당 원가가 달라지므로 유효 초당 단가(baseUsd/초)로 표시.
+      const units = params.duration_sec ?? 1
+      const unitUsd = units > 0 ? baseUsd / units : baseUsd
+      return { kind: 'per_video_token', unitUsd, units, unitLabel: '초', marginPct, baseUsd, billedUsd }
     }
     case 'per_token': {
       return { kind: 'per_token', unitUsd: p.usd_per_unit, units: 1, unitLabel: '건', marginPct, baseUsd, billedUsd }
@@ -168,12 +177,17 @@ export async function createGeneration(
     : inputs.duration_sec
   let billedUsd: number
   try {
+    const resolutionVal = data.resolution ?? inputs.resolution
+    const ratioVal = data.ratio ?? inputs.ratio
     billedUsd = estimateBilledUsd(meta, {
       prompt,
       count: typeof inputs.count === 'number' && inputs.count > 0 ? inputs.count : 1,
       duration_sec: durationVal !== undefined ? Number(durationVal) : undefined,
       // 오디오 단가 분기. 검증 통과한 data 우선, 없으면 raw inputs 폴백.
       generate_audio: (data.generate_audio ?? inputs.generate_audio) === true,
+      // 토큰 과금 영상(per_video_token) 출력 픽셀 산출용
+      resolution: typeof resolutionVal === 'string' ? resolutionVal : undefined,
+      ratio: typeof ratioVal === 'string' ? ratioVal : undefined,
     })
   } catch (e) {
     if (e instanceof UnsupportedDurationError) return { ok: false, code: 'DURATION', message: '지원하지 않는 길이입니다.' }
