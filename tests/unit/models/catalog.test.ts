@@ -24,14 +24,9 @@ describe('catalog registry', () => {
     expect(new Set(ids).size).toBe(ids.length)
   })
 
-  it('활성 config는 atlasModel이 비어있지 않다 (gpt-image 예외)', () => {
+  it('활성 config는 atlasModel이 비어있지 않다', () => {
     for (const c of listActiveConfigs()) {
-      if (c.id === 'gpt-image-2.0') {
-        expect(c.provider).toBe('openai')
-        expect(c.atlasModel).toBe('')
-      } else {
-        expect(c.atlasModel.length).toBeGreaterThan(0)
-      }
+      expect(c.atlasModel.length).toBeGreaterThan(0)
     }
   })
 
@@ -60,31 +55,11 @@ describe('catalog registry', () => {
     expect(listConfigs().length).toBe(MODEL_CONFIGS.length)
     const active = listActiveConfigs()
     const ids = active.map((c) => c.id).sort()
-    expect(ids).toEqual(
-      [
-        'gpt-image-2.0',
-        'nanobanana-2-t2i',
-        'nanobanana-2-ref2i',
-        'nanobanana-pro-t2i',
-        'seedream-v4-t2i',
-        'seedream-v4.5-t2i',
-        'veo3.1-t2v',
-        'veo3.1-fast-t2v',
-        'veo3.1-i2v',
-        'veo3.1-fast-i2v',
-        'seedance-2-i2v',
-        'seedance-2-t2v',
-        'seedance-2-ref2v',
-        'kling-v3-std-t2v',
-        'kling-v3-pro-t2v',
-        'kling-v3-std-i2v',
-        'kling-v3-pro-i2v',
-        'veo3.1-ref2v',
-      ].sort(),
-    )
-    // 모든 활성 config는 비어있지 않은 atlasModel (gpt-image=OpenAI 예외)
+    // 가격은 owner 확정값만 사용 → 확정된 nano-2 2종만 활성, 나머지 전부 비활성.
+    expect(ids).toEqual(['nanobanana-2-t2i', 'nanobanana-2-ref2i'].sort())
+    // 모든 활성 config는 비어있지 않은 atlasModel
     for (const c of active) {
-      if (c.id !== 'gpt-image-2.0') expect(c.atlasModel.length).toBeGreaterThan(0)
+      expect(c.atlasModel.length).toBeGreaterThan(0)
     }
   })
 })
