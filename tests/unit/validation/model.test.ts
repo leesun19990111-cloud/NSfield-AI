@@ -16,6 +16,26 @@ describe('pricingJsonSchema', () => {
     expect(r.success).toBe(true)
   })
 
+  it('valid per_video_token passes', () => {
+    const r = pricingJsonSchema.safeParse({
+      kind: 'per_video_token',
+      usd_per_1k_tokens: 0.0112,
+      fps: 24,
+      options: { allowed_durations_sec: [4, 8], polling_interval_sec: 60 },
+    })
+    expect(r.success).toBe(true)
+  })
+
+  it('rejects per_video_token with non-positive fps', () => {
+    const r = pricingJsonSchema.safeParse({
+      kind: 'per_video_token',
+      usd_per_1k_tokens: 0.0112,
+      fps: 0,
+      options: { allowed_durations_sec: [4], polling_interval_sec: 60 },
+    })
+    expect(r.success).toBe(false)
+  })
+
   it('rejects missing kind', () => {
     const r = pricingJsonSchema.safeParse({ usd_per_unit: 0.04 })
     expect(r.success).toBe(false)

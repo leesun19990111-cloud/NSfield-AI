@@ -26,6 +26,12 @@ export const pricingJsonSchema = z.discriminatedUnion('kind', [
     tiers: z.record(z.string(), z.number().nonnegative()),
     options: optionsSchema,
   }),
+  z.object({
+    kind: z.literal('per_video_token'),
+    usd_per_1k_tokens: z.number().nonnegative(),
+    fps: z.number().positive(),
+    options: optionsSchema,
+  }),
 ])
 
 export const updateModelSchema = z.object({

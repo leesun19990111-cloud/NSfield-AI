@@ -51,6 +51,20 @@ function buildSimRows(
         error: null,
       }
     }
+    // per_video_token: 원가가 해상도×화면비에 따라 달라지므로 대표 길이로 해상도별 비교 표시
+    if (p.kind === 'per_video_token') {
+      const durs = p.options.allowed_durations_sec
+      const dur = durs.includes(5) ? 5 : durs[0]
+      const rows = ['480p', '720p', '1080p'].map((res) => {
+        const params = { prompt: 'x', duration_sec: dur, resolution: res, ratio: '16:9' }
+        return {
+          label: `${res} ${dur}초 (16:9)`,
+          baseUsd: estimateRawUsd(meta, params),
+          billedUsd: estimateBilledUsd(meta, params),
+        }
+      })
+      return { rows, error: null }
+    }
     // per_second / per_video_fixed: one row per allowed duration
     const durations = p.options.allowed_durations_sec
     const rows = durations.map((d) => {
@@ -67,10 +81,14 @@ function buildSimRows(
   }
 }
 
-// JSON 파싱 없이 기본 단가를 한눈에 보여주기 위한 힌트 (per_video_fixed는 tiers라 단가 없음)
-function detectBaseRate(p: PricingJson): { kind: string; usdPerUnit: number | null } {
-  if (p.kind === 'per_video_fixed') return { kind: p.kind, usdPerUnit: null }
-  return { kind: p.kind, usdPerUnit: p.usd_per_unit }
+// JSON 파싱 없이 기본 단가를 한눈에 보여주기 위한 힌트.
+// per_video_fixed는 tiers, per_video_token은 1k 토큰당 요금이라 별도 표기.
+function detectBaseRate(p: PricingJson): { kind: string; hint: string } {
+  if (p.kind === 'per_video_fixed') return { kind: p.kind, hint: 'tiers (구간별 고정가)' }
+  if (p.kind === 'per_video_token') {
+    return { kind: p.kind, hint: `${formatUsdPrecise(p.usd_per_1k_tokens)}/1k tokens · ${p.fps}fps` }
+  }
+  return { kind: p.kind, hint: `usd_per_unit ${formatUsdPrecise(p.usd_per_unit)}` }
 }
 
 export function ModelEditor({ model, fxRate }: { model: EditorModel; fxRate: number }) {
@@ -185,10 +203,7 @@ export function ModelEditor({ model, fxRate }: { model: EditorModel; fxRate: num
           <label className="text-sm text-[var(--text-muted)]">가격 규칙 (JSON)</label>
           {baseRate && (
             <p className="text-xs text-[var(--text-dim)] font-mono">
-              kind: {baseRate.kind}
-              {baseRate.usdPerUnit !== null
-                ? ` · usd_per_unit ${formatUsdPrecise(baseRate.usdPerUnit)}`
-                : ' · tiers (구간별 고정가)'}
+              kind: {baseRate.kind} · {baseRate.hint}
             </p>
           )}
           <textarea

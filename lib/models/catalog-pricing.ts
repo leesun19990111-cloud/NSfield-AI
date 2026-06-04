@@ -27,5 +27,10 @@ export function lowestBilledUsd(model: {
     const min = Math.min(...p.options.allowed_durations_sec)
     return estimateBilledUsd(meta, { prompt: 'x', duration_sec: min })
   }
+  if (p.kind === 'per_video_token') {
+    // 최저가 = 최소 길이 + 최저 픽셀(480p·1:1) 조합
+    const min = Math.min(...p.options.allowed_durations_sec)
+    return estimateBilledUsd(meta, { prompt: 'x', duration_sec: min, resolution: '480p', ratio: '1:1' })
+  }
   return 0
 }
