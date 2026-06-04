@@ -39,8 +39,24 @@ describe('AtlasCloud 기준 단가 × 1.1 (엔진 마진)', () => {
       .toBeCloseTo(0.1034, 4)
   })
 
-  it('nanobanana-pro-t2i per_image 0.14 → 0.154', () => {
-    expect(estimateBilledUsd(meta('nanobanana-pro-t2i'), { prompt: 'x' })).toBeCloseTo(0.154, 4)
+  it('nanobanana-pro-t2i 1k·2k 0.14 → 0.154', () => {
+    expect(estimateBilledUsd(meta('nanobanana-pro-t2i'), { prompt: 'x', resolution: '1k' })).toBeCloseTo(0.154, 4)
+    expect(estimateBilledUsd(meta('nanobanana-pro-t2i'), { prompt: 'x', resolution: '2k' })).toBeCloseTo(0.154, 4)
+  })
+
+  it('nanobanana-pro-t2i 4k 0.24 → 0.264', () => {
+    expect(estimateBilledUsd(meta('nanobanana-pro-t2i'), { prompt: 'x', resolution: '4k' })).toBeCloseTo(0.264, 4)
+  })
+
+  it('nanobanana-pro-t2i 1k + 웹검색 0.154 → 0.1694', () => {
+    expect(estimateBilledUsd(meta('nanobanana-pro-t2i'), { prompt: 'x', resolution: '1k', enable_web_search: true }))
+      .toBeCloseTo(0.1694, 4)
+  })
+
+  it('nanobanana-2-ref2i 해상도 tier 1k 0.088·2k 0.132·4k 0.176', () => {
+    expect(estimateBilledUsd(meta('nanobanana-2-ref2i'), { prompt: 'x', resolution: '1k' })).toBeCloseTo(0.088, 4)
+    expect(estimateBilledUsd(meta('nanobanana-2-ref2i'), { prompt: 'x', resolution: '2k' })).toBeCloseTo(0.132, 4)
+    expect(estimateBilledUsd(meta('nanobanana-2-ref2i'), { prompt: 'x', resolution: '4k' })).toBeCloseTo(0.176, 4)
   })
 
   it('seedream-v4-t2i per_image 0.03 → 0.033', () => {

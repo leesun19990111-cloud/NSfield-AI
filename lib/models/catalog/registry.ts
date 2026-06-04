@@ -181,7 +181,11 @@ export const MODEL_CONFIGS: ModelConfig[] = [
     provider: 'google',
     isActive: true,
     marginPct: 10,
-    pricing: { kind: 'per_image', usd_per_unit: 0.08 },
+    // nano-banana-2 동일 해상도 단가(1k/2k/4k). ref2i는 검색 토글 없어 추가과금 없음.
+    pricing: {
+      kind: 'per_image_tiered',
+      resolution_usd: { '1k': 0.08, '2k': 0.12, '4k': 0.16 },
+    },
     fields: nanobanana2Ref2iFields,
     advancedFields: nanobanana2Ref2iAdvanced,
   },
@@ -250,7 +254,12 @@ export const MODEL_CONFIGS: ModelConfig[] = [
     provider: 'google',
     isActive: true,
     marginPct: 10,
-    pricing: { kind: 'per_image', usd_per_unit: 0.14 },
+    // 해상도별 단가: 1k·2k 동일 $0.14, 4k $0.24. 웹검색 토글 +$0.014(pro는 image search 없음).
+    pricing: {
+      kind: 'per_image_tiered',
+      resolution_usd: { '1k': 0.14, '2k': 0.14, '4k': 0.24 },
+      surcharges: { enable_web_search: 0.014 },
+    },
     fields: nanobananaProT2iFields,
     advancedFields: nanobananaProT2iAdvanced,
   },
