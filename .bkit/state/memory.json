@@ -1,8 +1,8 @@
 {
-  "sessionCount": 9,
+  "sessionCount": 10,
   "lastSession": {
-    "startedAt": "2026-06-03T06:07:26.783Z",
+    "startedAt": "2026-06-04T01:41:56.440Z",
     "platform": "claude",
-    "level": "Starter"
+    "level": "Dynamic"
   }
 }
