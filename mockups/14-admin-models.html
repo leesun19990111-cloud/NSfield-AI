@@ -1,0 +1,69 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>모델 가격 관리 · NS Admin</title><link rel="stylesheet" href="style.css"></head><body>
+<div class="admin-shell">
+  <aside class="sidebar">
+    <div class="logo">NS Admin</div>
+    <nav>
+      <a class="sidebar-item" href="12-admin-dashboard.html">대시보드</a>
+      <a class="sidebar-item" href="13-admin-topups.html">충전<span class="badge-count">3</span></a>
+      <a class="sidebar-item" href="16-admin-users.html">사용자</a>
+      <a class="sidebar-item active" href="14-admin-models.html">모델</a>
+      <a class="sidebar-item" href="18-admin-generations.html">생성내역</a>
+      <a class="sidebar-item" href="20-admin-fx-rates.html">환율</a>
+      <a class="sidebar-item" href="21-admin-audit.html">감사로그</a>
+    </nav>
+    <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border)">
+      <a class="sidebar-item" href="10-wallet.html">← 사용자 화면</a>
+    </div>
+  </aside>
+  <main class="admin-main">
+    <div class="page-head">
+      <div class="eyebrow">관리자</div>
+      <h1 class="h1">모델 가격 관리</h1>
+      <p class="muted small" style="margin-top:6px">원가는 owner 확정값만 사용. 사용자가 = 원가 × (1+마진). 영상은 초당 과금.</p>
+    </div>
+
+    <div class="row wrap row-between" style="margin-bottom:16px">
+      <div class="row wrap" style="gap:12px">
+        <input class="input" placeholder="모델 검색" style="width:200px">
+        <div class="seg">
+          <span class="seg-item on">전체</span>
+          <span class="seg-item">이미지</span>
+          <span class="seg-item">영상</span>
+        </div>
+      </div>
+      <span class="badge badge-muted">활성 18 · 비활성 2</span>
+    </div>
+
+    <div class="card">
+      <table class="table">
+        <thead><tr><th>모델</th><th>패밀리</th><th>모달리티</th><th>과금방식</th><th class="num">원가</th><th class="num">마진</th><th class="num">사용자가</th><th>상태</th><th>편집</th></tr></thead>
+        <tbody>
+          <!-- 이미지 per_image -->
+          <tr><td>Nano Banana 2 (t2i)</td><td>nano-banana-2</td><td>t2i</td><td><span class="badge badge-info">장당</span></td><td class="num mono">$0.08</td><td class="num">+10%</td><td class="num mono">$0.088/장</td><td><span class="toggle on"><span class="knob"></span></span></td><td><a class="btn btn-sm btn-surface" href="15-admin-model-editor.html">편집</a></td></tr>
+          <tr><td>Nano Banana 2 (ref2i)</td><td>nano-banana-2</td><td>ref2i</td><td><span class="badge badge-info">장당</span></td><td class="num mono">$0.08</td><td class="num">+10%</td><td class="num mono">$0.088/장</td><td><span class="toggle on"><span class="knob"></span></span></td><td><a class="btn btn-sm btn-surface" href="15-admin-model-editor.html">편집</a></td></tr>
+          <tr><td>Nano Banana Pro (t2i)</td><td>nano-banana-pro</td><td>t2i</td><td><span class="badge badge-info">장당</span></td><td class="num mono">$0.14</td><td class="num">+10%</td><td class="num mono">$0.154/장</td><td><span class="toggle on"><span class="knob"></span></span></td><td><a class="btn btn-sm btn-surface" href="15-admin-model-editor.html">편집</a></td></tr>
+          <tr><td>Seedream v4 (t2i)</td><td>seedream-v4</td><td>t2i</td><td><span class="badge badge-info">장당</span></td><td class="num mono">$0.03</td><td class="num">+10%</td><td class="num mono">$0.033/장</td><td><span class="toggle on"><span class="knob"></span></span></td><td><a class="btn btn-sm btn-surface" href="15-admin-model-editor.html">편집</a></td></tr>
+          <tr><td>Seedream v4.5 (t2i)</td><td>seedream-v4.5</td><td>t2i</td><td><span class="badge badge-info">장당</span></td><td class="num mono">$0.04</td><td class="num">+10%</td><td class="num mono">$0.044/장</td><td><span class="toggle on"><span class="knob"></span></span></td><td><a class="btn btn-sm btn-surface" href="15-admin-model-editor.html">편집</a></td></tr>
+          <tr><td>GPT Image 2.0 (t2i)</td><td>gpt-image-2.0</td><td>t2i</td><td><span class="badge badge-info">장당</span></td><td class="num mono">$0.01</td><td class="num">+10%</td><td class="num mono">$0.011/장</td><td><span class="toggle on"><span class="knob"></span></span></td><td><a class="btn btn-sm btn-surface" href="15-admin-model-editor.html">편집</a></td></tr>
+          <!-- 영상 per_second -->
+          <tr><td>Veo 3.1 (t2v)</td><td>veo3.1</td><td>t2v</td><td><span class="badge badge-accent">초당</span></td><td class="num mono">$0.20</td><td class="num">+10%</td><td class="num mono">$0.22/초</td><td><span class="toggle on"><span class="knob"></span></span></td><td><a class="btn btn-sm btn-surface" href="15-admin-model-editor.html">편집</a></td></tr>
+          <tr><td>Veo 3.1 (i2v)</td><td>veo3.1</td><td>i2v</td><td><span class="badge badge-accent">초당</span></td><td class="num mono">$0.20</td><td class="num">+10%</td><td class="num mono">$0.22/초</td><td><span class="toggle on"><span class="knob"></span></span></td><td><a class="btn btn-sm btn-surface" href="15-admin-model-editor.html">편집</a></td></tr>
+          <tr><td>Veo 3.1 (ref2v)</td><td>veo3.1</td><td>ref2v</td><td><span class="badge badge-accent">초당</span></td><td class="num mono">$0.20</td><td class="num">+10%</td><td class="num mono">$0.22/초</td><td><span class="toggle on"><span class="knob"></span></span></td><td><a class="btn btn-sm btn-surface" href="15-admin-model-editor.html">편집</a></td></tr>
+          <tr><td>Veo 3.1 Fast (t2v)</td><td>veo3.1-fast</td><td>t2v</td><td><span class="badge badge-accent">초당</span></td><td class="num mono">$0.08</td><td class="num">+10%</td><td class="num mono">$0.088/초</td><td><span class="toggle on"><span class="knob"></span></span></td><td><a class="btn btn-sm btn-surface" href="15-admin-model-editor.html">편집</a></td></tr>
+          <tr><td>Veo 3.1 Fast (i2v)</td><td>veo3.1-fast</td><td>i2v</td><td><span class="badge badge-accent">초당</span></td><td class="num mono">$0.08</td><td class="num">+10%</td><td class="num mono">$0.088/초</td><td><span class="toggle on"><span class="knob"></span></span></td><td><a class="btn btn-sm btn-surface" href="15-admin-model-editor.html">편집</a></td></tr>
+          <tr><td>Seedance 2 (t2v)</td><td>seedance-2</td><td>t2v</td><td><span class="badge badge-accent">초당</span></td><td class="num mono">$0.112</td><td class="num">+10%</td><td class="num mono">$0.1232/초</td><td><span class="toggle on"><span class="knob"></span></span></td><td><a class="btn btn-sm btn-surface" href="15-admin-model-editor.html">편집</a></td></tr>
+          <tr><td>Seedance 2 (i2v)</td><td>seedance-2</td><td>i2v</td><td><span class="badge badge-accent">초당</span></td><td class="num mono">$0.112</td><td class="num">+10%</td><td class="num mono">$0.1232/초</td><td><span class="toggle on"><span class="knob"></span></span></td><td><a class="btn btn-sm btn-surface" href="15-admin-model-editor.html">편집</a></td></tr>
+          <tr><td>Seedance 2 (ref2v)</td><td>seedance-2</td><td>ref2v</td><td><span class="badge badge-accent">초당</span></td><td class="num mono">$0.112</td><td class="num">+10%</td><td class="num mono">$0.1232/초</td><td><span class="toggle on"><span class="knob"></span></span></td><td><a class="btn btn-sm btn-surface" href="15-admin-model-editor.html">편집</a></td></tr>
+          <tr><td>Kling v3.0 Standard (t2v)</td><td>kling-v3.0-std</td><td>t2v</td><td><span class="badge badge-accent">초당</span></td><td class="num mono">$0.084</td><td class="num">+10%</td><td class="num mono">$0.0924/초</td><td><span class="toggle on"><span class="knob"></span></span></td><td><a class="btn btn-sm btn-surface" href="15-admin-model-editor.html">편집</a></td></tr>
+          <tr><td>Kling v3.0 Standard (i2v)</td><td>kling-v3.0-std</td><td>i2v</td><td><span class="badge badge-accent">초당</span></td><td class="num mono">$0.084</td><td class="num">+10%</td><td class="num mono">$0.0924/초</td><td><span class="toggle on"><span class="knob"></span></span></td><td><a class="btn btn-sm btn-surface" href="15-admin-model-editor.html">편집</a></td></tr>
+          <tr><td>Kling v3.0 Pro (t2v)</td><td>kling-v3.0-pro</td><td>t2v</td><td><span class="badge badge-accent">초당</span></td><td class="num mono">$0.112</td><td class="num">+10%</td><td class="num mono">$0.1232/초</td><td><span class="toggle on"><span class="knob"></span></span></td><td><a class="btn btn-sm btn-surface" href="15-admin-model-editor.html">편집</a></td></tr>
+          <tr><td>Kling v3.0 Pro (i2v)</td><td>kling-v3.0-pro</td><td>i2v</td><td><span class="badge badge-accent">초당</span></td><td class="num mono">$0.112</td><td class="num">+10%</td><td class="num mono">$0.1232/초</td><td><span class="toggle on"><span class="knob"></span></span></td><td><a class="btn btn-sm btn-surface" href="15-admin-model-editor.html">편집</a></td></tr>
+          <!-- mock 비활성 -->
+          <tr><td class="dim">목 이미지 (mock-image)</td><td class="dim">mock-image</td><td class="dim">t2i</td><td><span class="badge badge-info">장당</span></td><td class="num mono dim">$0.00</td><td class="num dim">+10%</td><td class="num mono dim">$0.00</td><td><span class="toggle"><span class="knob"></span></span> <span class="badge badge-muted">비활성</span></td><td><a class="btn btn-sm btn-surface" href="15-admin-model-editor.html">편집</a></td></tr>
+          <tr><td class="dim">목 영상 (mock-video)</td><td class="dim">mock-video</td><td class="dim">t2v</td><td><span class="badge badge-accent">초당</span></td><td class="num mono dim">$0.00</td><td class="num dim">+10%</td><td class="num mono dim">$0.00</td><td><span class="toggle"><span class="knob"></span></span> <span class="badge badge-muted">비활성</span></td><td><a class="btn btn-sm btn-surface" href="15-admin-model-editor.html">편집</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+</body></html>

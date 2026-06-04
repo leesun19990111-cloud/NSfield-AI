@@ -1,0 +1,53 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>사용자 · NS Admin</title><link rel="stylesheet" href="style.css"></head><body>
+<div class="admin-shell">
+  <aside class="sidebar">
+    <div class="logo">NS Admin</div>
+    <nav>
+      <a class="sidebar-item" href="12-admin-dashboard.html">대시보드</a>
+      <a class="sidebar-item" href="13-admin-topups.html">충전<span class="badge-count">3</span></a>
+      <a class="sidebar-item active" href="16-admin-users.html">사용자</a>
+      <a class="sidebar-item" href="14-admin-models.html">모델</a>
+      <a class="sidebar-item" href="18-admin-generations.html">생성내역</a>
+      <a class="sidebar-item" href="20-admin-fx-rates.html">환율</a>
+      <a class="sidebar-item" href="21-admin-audit.html">감사로그</a>
+    </nav>
+    <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border)">
+      <a class="sidebar-item" href="10-wallet.html">← 사용자 화면</a>
+    </div>
+  </aside>
+  <main class="admin-main">
+    <div class="page-head">
+      <div class="eyebrow">관리자</div>
+      <h1 class="h1">사용자</h1>
+    </div>
+
+    <div class="row wrap row-between" style="margin-bottom:16px">
+      <div class="row wrap" style="gap:12px">
+        <input class="input" placeholder="이메일·이름 검색" style="width:220px">
+        <div class="seg">
+          <span class="seg-item on">전체</span>
+          <span class="seg-item">활성</span>
+          <span class="seg-item">정지</span>
+        </div>
+      </div>
+      <span class="badge badge-muted">총 24명</span>
+    </div>
+
+    <div class="card">
+      <table class="table">
+        <thead><tr><th>이메일</th><th>표시이름</th><th>권한</th><th class="num">잔액</th><th class="num">생성수</th><th>가입일</th><th>상태</th><th>관리</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">lee.sun@nsfield.kr</td><td>이선</td><td><span class="badge badge-accent">ADMIN</span></td><td class="num mono">$351.11</td><td class="num">211</td><td class="mono">2026-03-02</td><td><span class="badge badge-success">활성</span></td><td><a class="btn btn-sm btn-surface" href="17-admin-user-detail.html">상세</a></td></tr>
+          <tr><td class="mono">minsu.kim@gmail.com</td><td>김민수</td><td><span class="badge badge-muted">USER</span></td><td class="num mono">$83.49</td><td class="num">37</td><td class="mono">2026-04-11</td><td><span class="badge badge-success">활성</span></td><td><a class="btn btn-sm btn-surface" href="17-admin-user-detail.html">상세</a></td></tr>
+          <tr><td class="mono">seoyeon.lee@naver.com</td><td>이서연</td><td><span class="badge badge-muted">USER</span></td><td class="num mono">$56.05</td><td class="num">52</td><td class="mono">2026-04-19</td><td><span class="badge badge-success">활성</span></td><td><a class="btn btn-sm btn-surface" href="17-admin-user-detail.html">상세</a></td></tr>
+          <tr><td class="mono">jihoon.park@kakao.com</td><td>박지훈</td><td><span class="badge badge-muted">USER</span></td><td class="num mono">$0.00</td><td class="num">18</td><td class="mono">2026-05-03</td><td><span class="badge badge-danger">정지</span></td><td><a class="btn btn-sm btn-surface" href="17-admin-user-detail.html">상세</a></td></tr>
+          <tr><td class="mono">yujin.jung@gmail.com</td><td>정유진</td><td><span class="badge badge-muted">USER</span></td><td class="num mono">$138.36</td><td class="num">94</td><td class="mono">2026-03-28</td><td><span class="badge badge-success">활성</span></td><td><a class="btn btn-sm btn-surface" href="17-admin-user-detail.html">상세</a></td></tr>
+          <tr><td class="mono">dohyun.choi@naver.com</td><td>최도현</td><td><span class="badge badge-muted">USER</span></td><td class="num mono">$29.65</td><td class="num">29</td><td class="mono">2026-05-12</td><td><span class="badge badge-success">활성</span></td><td><a class="btn btn-sm btn-surface" href="17-admin-user-detail.html">상세</a></td></tr>
+          <tr><td class="mono">jimin.han@gmail.com</td><td>한지민</td><td><span class="badge badge-muted">USER</span></td><td class="num mono">$4.75</td><td class="num">8</td><td class="mono">2026-05-25</td><td><span class="badge badge-success">활성</span></td><td><a class="btn btn-sm btn-surface" href="17-admin-user-detail.html">상세</a></td></tr>
+          <tr><td class="mono">seojun.oh@kakao.com</td><td>오서준</td><td><span class="badge badge-muted">USER</span></td><td class="num mono">$214.63</td><td class="num">126</td><td class="mono">2026-03-15</td><td><span class="badge badge-success">활성</span></td><td><a class="btn btn-sm btn-surface" href="17-admin-user-detail.html">상세</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+</body></html>

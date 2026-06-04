@@ -1,0 +1,56 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>감사 로그 · NS Admin</title><link rel="stylesheet" href="style.css"></head><body>
+<div class="admin-shell">
+  <aside class="sidebar">
+    <div class="logo">NS Admin</div>
+    <nav>
+      <a class="sidebar-item" href="12-admin-dashboard.html">대시보드</a>
+      <a class="sidebar-item" href="13-admin-topups.html">충전<span class="badge-count">3</span></a>
+      <a class="sidebar-item" href="16-admin-users.html">사용자</a>
+      <a class="sidebar-item" href="14-admin-models.html">모델</a>
+      <a class="sidebar-item" href="18-admin-generations.html">생성내역</a>
+      <a class="sidebar-item" href="20-admin-fx-rates.html">환율</a>
+      <a class="sidebar-item active" href="21-admin-audit.html">감사로그</a>
+    </nav>
+    <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border)">
+      <a class="sidebar-item" href="10-wallet.html">← 사용자 화면</a>
+    </div>
+  </aside>
+  <main class="admin-main">
+    <div class="page-head">
+      <div class="eyebrow">관리자</div>
+      <h1 class="h1">감사 로그</h1>
+      <p class="muted small" style="margin-top:6px">모든 관리자 행위·잔액 변경 기록 (append-only)</p>
+    </div>
+
+    <div class="row wrap" style="gap:12px;margin-bottom:16px">
+      <input class="input" placeholder="행위자·대상·액션 검색" style="width:220px">
+      <div class="seg">
+        <span class="seg-item on">전체</span>
+        <span class="seg-item">충전</span>
+        <span class="seg-item">잔액조정</span>
+        <span class="seg-item">모델</span>
+        <span class="seg-item">사용자</span>
+        <span class="seg-item">환율</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <table class="table">
+        <thead><tr><th>시각</th><th>행위자</th><th>액션</th><th>대상</th><th>상세</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">06-04 14:33</td><td>이선 <span class="badge badge-accent">ADMIN</span></td><td class="mono">TOPUP_APPROVE</td><td>김민수</td><td><span class="badge badge-success">₩50,000 → +$29.02</span> <span class="small dim">@1,723, 시세+12%</span></td></tr>
+          <tr><td class="mono">06-04 14:30</td><td>system</td><td class="mono">FX_UPDATE</td><td>환율</td><td><span class="badge badge-info mono">1,536.4→1,538.0</span></td></tr>
+          <tr><td class="mono">06-04 13:50</td><td>이선 <span class="badge badge-accent">ADMIN</span></td><td class="mono">MODEL_PRICE_UPDATE</td><td>seedance-2-i2v</td><td><span class="badge badge-accent mono">0.10→0.112</span></td></tr>
+          <tr><td class="mono">06-04 13:12</td><td>이선 <span class="badge badge-accent">ADMIN</span></td><td class="mono">BALANCE_ADJUST</td><td>서연</td><td><span class="badge badge-warning mono">−$3.25</span> <span class="small dim">사유: 중복충전</span></td></tr>
+          <tr><td class="mono">06-04 11:05</td><td>이선 <span class="badge badge-accent">ADMIN</span></td><td class="mono">USER_SUSPEND</td><td>박지훈</td><td><span class="badge badge-danger">정지</span></td></tr>
+          <tr><td class="mono">06-03 18:15</td><td>이선 <span class="badge badge-accent">ADMIN</span></td><td class="mono">TOPUP_APPROVE</td><td>정유진</td><td><span class="badge badge-success">+₩50,000</span></td></tr>
+          <tr><td class="mono">06-03 16:02</td><td>이선 <span class="badge badge-accent">ADMIN</span></td><td class="mono">TOPUP_APPROVE</td><td>최도현</td><td><span class="badge badge-success">+₩200,000</span></td></tr>
+          <tr><td class="mono">06-03 15:40</td><td>이선 <span class="badge badge-accent">ADMIN</span></td><td class="mono">MODEL_TOGGLE</td><td>mock-video</td><td><span class="badge badge-muted">비활성화</span></td></tr>
+          <tr><td class="mono">06-02 09:30</td><td>이선 <span class="badge badge-accent">ADMIN</span></td><td class="mono">FX_OVERRIDE</td><td>환율</td><td><span class="badge badge-info mono">고정 1,541.0</span></td></tr>
+          <tr><td class="mono">06-02 09:21</td><td>이선 <span class="badge badge-accent">ADMIN</span></td><td class="mono">TOPUP_REJECT</td><td>한지민</td><td><span class="badge badge-danger">반려 (입금 미확인)</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+</body></html>

@@ -1,0 +1,158 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>생성하기 · Seedance — NS Field</title><link rel="stylesheet" href="style.css"></head><body>
+<header class="topbar"><div class="topbar-inner">
+  <nav class="nav"><a class="brand" href="10-wallet.html">NS Field<span class="dot">.</span></a>
+    <a class="nav-link" href="04-models.html">모델</a><a class="nav-link" href="08-library.html">라이브러리</a></nav>
+  <div class="row" style="gap:14px"><span class="balance-chip">$&nbsp;<span class="won">83.49</span></span>
+    <a class="nav-link" href="12-admin-dashboard.html" style="color:var(--accent)">관리자</a>
+    <a class="nav-link" href="#">민수</a></div>
+</div></header>
+
+<div class="container">
+  <div class="split">
+
+    <!-- LEFT: form -->
+    <div class="card card-pad-lg">
+      <div class="row-between" style="margin-bottom:20px">
+        <div class="row" style="gap:10px">
+          <span class="h2">Seedance · 이미지&rarr;영상</span>
+          <span class="badge badge-info">영상</span>
+        </div>
+        <a class="btn btn-ghost btn-sm" href="04-models.html">모델 변경</a>
+      </div>
+
+      <div class="field">
+        <label class="label">프롬프트</label>
+        <textarea class="textarea" placeholder="예) 도시 야경 위로 천천히 줌인하며 네온 불빛이 흔들리는 시네마틱 영상, 부드러운 카메라 무빙"></textarea>
+        <div class="hint">입력 이미지를 기준으로 움직임과 분위기를 묘사하면 결과가 좋아집니다.</div>
+      </div>
+
+      <div class="field">
+        <label class="label">입력 이미지 (필수)</label>
+        <div class="row" style="align-items:stretch;gap:12px">
+          <div class="dropzone" style="flex:1">
+            이미지를 끌어다 놓거나 클릭 — 또는<br>
+            <span class="spacer"></span>
+            <button class="btn btn-surface btn-sm small" style="margin-top:10px">라이브러리에서 선택</button>
+          </div>
+          <div class="thumb" style="width:120px;flex-shrink:0">
+            <img src="img/seedance-2-i2v.webp" alt="" loading="lazy">
+            <span class="badge badge-success" style="position:absolute;top:6px;left:6px">✓</span>
+          </div>
+        </div>
+        <div class="hint">city-night-01.jpg · 1280×720</div>
+      </div>
+
+      <div class="field">
+        <label class="label">비율</label>
+        <div class="seg">
+          <span class="seg-item on">adaptive</span>
+          <span class="seg-item">16:9</span>
+          <span class="seg-item">9:16</span>
+          <span class="seg-item">1:1</span>
+          <span class="seg-item">4:3</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">영상 길이</label>
+        <div class="seg">
+          <span class="seg-item">3초</span>
+          <span class="seg-item on">5초</span>
+          <span class="seg-item">10초</span>
+          <span class="seg-item">15초</span>
+          <span class="seg-item">30초</span>
+          <span class="seg-item">60초</span>
+        </div>
+        <div class="hint">최대 1분까지 생성할 수 있습니다.</div>
+      </div>
+
+      <div class="field">
+        <label class="label">해상도</label>
+        <div class="seg">
+          <span class="seg-item">480p</span>
+          <span class="seg-item on">720p</span>
+          <span class="seg-item">1080p</span>
+          <span class="seg-item">4K</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="row-between">
+          <div>
+            <label class="label" style="margin-bottom:2px">오디오 생성</label>
+            <span class="small dim">영상에 어울리는 배경음/효과음을 함께 생성합니다.</span>
+          </div>
+          <div class="toggle on"><span class="knob"></span></div>
+        </div>
+      </div>
+
+      <div class="card-2">
+        <div class="h3" style="margin-bottom:12px">고급 설정</div>
+        <div class="field" style="margin-bottom:14px">
+          <label class="label">last_image 입력</label>
+          <div class="dropzone" style="padding:18px">마지막 프레임으로 사용할 이미지 (선택)</div>
+        </div>
+        <div class="row-between">
+          <div>
+            <label class="label" style="margin-bottom:2px">return_last_frame</label>
+            <span class="small dim">생성된 영상의 마지막 프레임을 함께 반환</span>
+          </div>
+          <div class="toggle"><span class="knob"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: sticky estimate -->
+    <div class="card card-pad-lg" style="position:sticky;top:80px">
+      <div class="h3" style="margin-bottom:14px">예상 비용</div>
+
+      <div class="card-2" style="margin-bottom:16px">
+        <div class="row-between" style="margin-bottom:10px">
+          <span class="small muted">단가</span>
+          <span class="small mono">$0.1232/초</span>
+        </div>
+        <div class="small dim" style="margin-bottom:10px">원가 $0.112 + 10% 마진</div>
+        <div class="divide" style="margin:10px 0"></div>
+        <div class="row-between" style="margin-bottom:8px">
+          <span class="small muted">$0.1232/초 × 5초</span>
+          <span class="small mono">$0.616</span>
+        </div>
+        <div class="row-between" style="margin-bottom:8px">
+          <span class="small muted">해상도 720p</span>
+          <span class="small dim">추가 없음</span>
+        </div>
+        <div class="row-between">
+          <span class="small muted">오디오 생성</span>
+          <span class="small dim">추가 없음</span>
+        </div>
+        <div class="divide" style="margin:10px 0"></div>
+        <div class="small dim">달러 잔액에서 즉시 차감</div>
+      </div>
+
+      <div class="row-between" style="margin-bottom:16px;align-items:flex-end">
+        <span class="muted">합계</span>
+        <div style="text-align:right">
+          <div class="kpi price-usd">$0.616</div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-block btn-lg">✨ 생성하기 — $0.616</button>
+      <div class="small dim" style="text-align:center;margin:10px 0 16px">Seedance · 5초 · 720p 기준 · 달러 잔액에서 즉시 차감</div>
+
+      <div class="card-2" style="margin-bottom:14px">
+        <div class="row-between">
+          <span class="small muted">현재 잔액</span>
+          <span class="small mono">$83.49</span>
+        </div>
+        <div class="row-between" style="margin-top:6px">
+          <span class="small muted">생성 후 예상</span>
+          <span class="small mono">$82.87</span>
+        </div>
+      </div>
+
+      <div class="alert alert-info">영상은 백그라운드로 생성되며 완료되면 라이브러리에 표시됩니다.</div>
+    </div>
+
+  </div>
+</div>
+</body></html>

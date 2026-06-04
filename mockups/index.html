@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NS Field — 전체 페이지 목업</title>
+<link rel="stylesheet" href="style.css" />
+<style>
+  .viewer { display: grid; grid-template-columns: 232px 1fr; height: 100vh; }
+  .viewer-nav { border-right: 1px solid var(--border); overflow-y: auto; padding: 16px; }
+  .viewer-nav .grp { font-size: 11px; font-weight: 700; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--text-dim); margin: 18px 0 6px; }
+  .viewer-nav a { display: block; padding: 7px 10px; border-radius: 8px; font-size: 13px;
+    color: var(--text-muted); cursor: pointer; }
+  .viewer-nav a:hover { background: var(--bg-surface); color: var(--text-primary); }
+  .viewer-nav a.active { background: var(--accent); color: #fff; }
+  .viewer-main { display: flex; flex-direction: column; min-width: 0; }
+  .viewer-bar { height: 48px; border-bottom: 1px solid var(--border); display: flex;
+    align-items: center; gap: 12px; padding: 0 16px; }
+  .viewer-bar .url { font-family: ui-monospace, monospace; font-size: 12px; color: var(--text-dim); }
+  .viewer-bar a.open { margin-left: auto; font-size: 12px; color: var(--accent); }
+  iframe { flex: 1; width: 100%; border: 0; background: var(--bg-base); }
+  .brand-lg { padding: 4px 10px 8px; }
+  @media (max-width: 760px) {
+    .viewer { grid-template-columns: 1fr; height: auto; min-height: 100vh; }
+    .viewer-nav { border-right: 0; border-bottom: 1px solid var(--border); max-height: 42vh; }
+    .viewer-main { min-height: 58vh; }
+    .viewer-bar .url { max-width: 46vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  }
+</style>
+</head>
+<body>
+<div class="viewer">
+  <aside class="viewer-nav">
+    <div class="brand-lg"><span class="brand" style="font-size:17px">NS Field<span class="dot">.</span></span>
+      <div class="dim small" style="margin-top:2px">전체 페이지 목업</div></div>
+
+    <div class="grp">공개 / 인증</div>
+    <a data-src="01-home.html" data-url="/">랜딩 (홈)</a>
+    <a data-src="02-login.html" data-url="/auth/login">로그인</a>
+    <a data-src="03-signup.html" data-url="/auth/signup">회원가입</a>
+    <a data-src="04-models.html" data-url="/models">모델 카탈로그 (패밀리)</a>
+    <a data-src="05-models-family.html" data-url="/models/veo3.1">패밀리 상세 (모달리티)</a>
+    <a data-src="06-model-detail.html" data-url="/models/veo3.1/veo3.1-t2v">모델 상세</a>
+
+    <div class="grp">사용자 (로그인)</div>
+    <a data-src="07-generate.html" data-url="/generate/seedance-2-i2v">생성 폼 (동적)</a>
+    <a data-src="08-library.html" data-url="/library">라이브러리</a>
+    <a data-src="09-library-detail.html" data-url="/library/[id]">결과 상세</a>
+    <a data-src="10-wallet.html" data-url="/wallet">지갑</a>
+    <a data-src="11-topup.html" data-url="/wallet/topup">충전 요청</a>
+
+    <div class="grp">관리자</div>
+    <a data-src="12-admin-dashboard.html" data-url="/admin/dashboard">대시보드</a>
+    <a data-src="13-admin-topups.html" data-url="/admin/topups">충전 승인</a>
+    <a data-src="14-admin-models.html" data-url="/admin/models">모델 가격 관리</a>
+    <a data-src="15-admin-model-editor.html" data-url="/admin/models/[id]">모델 편집·시뮬레이터</a>
+    <a data-src="16-admin-users.html" data-url="/admin/users">사용자 목록</a>
+    <a data-src="17-admin-user-detail.html" data-url="/admin/users/[id]">사용자 상세</a>
+    <a data-src="18-admin-generations.html" data-url="/admin/generations">생성 내역</a>
+    <a data-src="19-admin-generation-detail.html" data-url="/admin/generations/[id]">생성 상세</a>
+    <a data-src="20-admin-fx-rates.html" data-url="/admin/fx-rates">환율 관리</a>
+    <a data-src="21-admin-audit.html" data-url="/admin/audit">감사 로그</a>
+  </aside>
+
+  <div class="viewer-main">
+    <div class="viewer-bar">
+      <span class="dotmark" style="background:var(--danger)"></span>
+      <span class="dotmark" style="background:var(--warning)"></span>
+      <span class="dotmark" style="background:var(--success)"></span>
+      <span class="url" id="urlbar">/</span>
+      <a class="open" id="openraw" target="_blank">새 탭에서 열기 ↗</a>
+    </div>
+    <iframe id="frame" src="01-home.html"></iframe>
+  </div>
+</div>
+<script>
+  const links = document.querySelectorAll('.viewer-nav a');
+  const frame = document.getElementById('frame');
+  const urlbar = document.getElementById('urlbar');
+  const openraw = document.getElementById('openraw');
+  function select(el) {
+    links.forEach(l => l.classList.remove('active'));
+    el.classList.add('active');
+    const src = el.dataset.src;
+    frame.src = src;
+    urlbar.textContent = el.dataset.url;
+    openraw.href = src;
+  }
+  links.forEach(l => l.addEventListener('click', () => select(l)));
+  select(links[0]);
+</script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>모델 편집 · NS Admin</title><link rel="stylesheet" href="style.css"></head><body>
+<div class="admin-shell">
+  <aside class="sidebar">
+    <div class="logo">NS Admin</div>
+    <nav>
+      <a class="sidebar-item" href="12-admin-dashboard.html">대시보드</a>
+      <a class="sidebar-item" href="13-admin-topups.html">충전<span class="badge-count">3</span></a>
+      <a class="sidebar-item" href="16-admin-users.html">사용자</a>
+      <a class="sidebar-item active" href="14-admin-models.html">모델</a>
+      <a class="sidebar-item" href="18-admin-generations.html">생성내역</a>
+      <a class="sidebar-item" href="20-admin-fx-rates.html">환율</a>
+      <a class="sidebar-item" href="21-admin-audit.html">감사로그</a>
+    </nav>
+    <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border)">
+      <a class="sidebar-item" href="10-wallet.html">← 사용자 화면</a>
+    </div>
+  </aside>
+  <main class="admin-main">
+    <div class="page-head">
+      <div class="small muted"><a href="14-admin-models.html" style="color:var(--text-muted)">모델</a> / Seedance 2 · 이미지→영상</div>
+      <h1 class="h1" style="margin-top:6px">모델 편집</h1>
+    </div>
+
+    <div class="split">
+      <div class="card card-pad-lg">
+        <h2 class="h2" style="margin-bottom:16px">기본 정보</h2>
+        <div class="field">
+          <label class="label">모델명</label>
+          <input class="input" value="Seedance 2 (i2v)" readonly style="opacity:.7">
+        </div>
+        <div class="field">
+          <label class="label">atlasModel</label>
+          <div class="copy-box mono">bytedance/seedance-2.0/image-to-video <span class="dim">readonly</span></div>
+        </div>
+        <div class="field">
+          <label class="label">과금 방식</label>
+          <select class="select">
+            <option>초당 (per_second)</option>
+            <option>장당 (per_image)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="label">원가 (usd_per_unit)</label>
+          <input class="input mono" value="0.112">
+          <div class="hint">AtlasCloud 콘솔 확인값만 입력 — 추정 금지</div>
+        </div>
+        <div class="field">
+          <label class="label">마진 (%)</label>
+          <input class="input mono" value="10">
+        </div>
+        <div class="field">
+          <label class="label">허용 길이 (초)</label>
+          <div class="seg">
+            <span class="seg-item">3</span>
+            <span class="seg-item on">5</span>
+            <span class="seg-item on">10</span>
+            <span class="seg-item">15</span>
+            <span class="seg-item">30</span>
+            <span class="seg-item">60</span>
+          </div>
+        </div>
+        <div class="field">
+          <div class="row-between">
+            <label class="label" style="margin-bottom:0">활성화</label>
+            <span class="toggle on"><span class="knob"></span></span>
+          </div>
+        </div>
+        <div class="row" style="gap:8px;margin-top:8px">
+          <button class="btn btn-primary">저장</button>
+          <a class="btn btn-ghost" href="14-admin-models.html">취소</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="h3" style="margin-bottom:12px">가격 시뮬레이터</h3>
+        <table class="table num">
+          <thead><tr><th style="text-align:left">길이</th><th class="num">원가$</th><th class="num">사용자가$(+10%)</th></tr></thead>
+          <tbody>
+            <tr><td style="text-align:left">3초</td><td class="num mono">$0.336</td><td class="num mono">$0.3696</td></tr>
+            <tr><td style="text-align:left">5초</td><td class="num mono">$0.560</td><td class="num mono">$0.616</td></tr>
+            <tr><td style="text-align:left">10초</td><td class="num mono">$1.120</td><td class="num mono">$1.232</td></tr>
+            <tr><td style="text-align:left">15초</td><td class="num mono">$1.680</td><td class="num mono">$1.848</td></tr>
+            <tr><td style="text-align:left">30초</td><td class="num mono">$3.360</td><td class="num mono">$3.696</td></tr>
+            <tr><td style="text-align:left">60초</td><td class="num mono">$6.720</td><td class="num mono">$7.392</td></tr>
+          </tbody>
+        </table>
+        <p class="dim small" style="margin-top:12px">사용자가 = 원가 × (1+마진). 달러로 직접 차감(환율 무관).</p>
+      </div>
+    </div>
+  </main>
+</div>
+</body></html>
