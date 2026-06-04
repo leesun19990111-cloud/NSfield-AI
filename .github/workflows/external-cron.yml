@@ -1,0 +1,35 @@
+name: external-cron
+
+# Vercel Hobby는 하루 1회보다 잦은 크론을 막으므로, 자주 호출이 필요한
+# poll-generations(영상 결과 폴링)와 fx-update(환율)를 GitHub Actions로 무료 대체.
+# 필요한 repo secrets: PROD_SITE_URL (예: https://nsfield.vercel.app), CRON_SECRET
+on:
+  schedule:
+    - cron: "*/5 * * * *" # poll-generations: 5분마다 (Actions 최소 간격)
+    - cron: "7 * * * *" # fx-update: 매시 7분
+  workflow_dispatch: {}
+
+jobs:
+  poll-generations:
+    if: github.event.schedule != '7 * * * *'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Poll running video generations
+        env:
+          SITE_URL: ${{ secrets.PROD_SITE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl -fsS -m 60 -X GET "$SITE_URL/api/cron/poll-generations" \
+            -H "Authorization: Bearer $CRON_SECRET"
+
+  fx-update:
+    if: github.event.schedule == '7 * * * *'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update exchange rate
+        env:
+          SITE_URL: ${{ secrets.PROD_SITE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl -fsS -m 60 -X GET "$SITE_URL/api/cron/fx-update" \
+            -H "Authorization: Bearer $CRON_SECRET"
