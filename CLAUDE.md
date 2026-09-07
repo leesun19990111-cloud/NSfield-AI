@@ -1,39 +1,16 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## 저장소 상태
 
-## Repository Status
+이 프로젝트는 **2026-09-07에 파기**되었다. 앱·API 코드, Prisma 스키마, 배포 설정, 크론 워크플로는
+전부 제거됐고 `docs/`(설계 문서)와 `mockups/`(화면 HTML 목업)만 남아 있다. 실행·빌드·테스트 명령은 없다.
 
-This repository is **pre-implementation**. As of 2026-05-27 the working tree contains only `.bkit/` framework state — there is no source code, build system, package manifest, README, or CI config yet.
+- 코드를 되살리려면 git 이력을 참고한다. 파기 직전 커밋의 부모가 마지막 동작 버전이다.
+- 이 저장소에 새 코드를 추가하라는 요청이 아니면, API·배포 관련 파일을 다시 만들지 않는다.
+- Vercel·Supabase·외부 API 키는 저장소 밖에 있으며 소유주가 직접 폐기한다(`README.md` 표 참고).
 
-Before adding architecture or command sections to this file, the first real artifact must land (e.g. a chosen stack, a `package.json` / `pyproject.toml` / equivalent, or a documented design doc). Until then, do not invent commands or architecture — read the working tree and update this file from what actually exists.
+## 규칙
 
-## Tooling Already in Use
-
-- **bkit Vibecoding Kit v2.0.x** is active. State lives under `.bkit/`:
-  - `.bkit/state/pdca-status.json` — PDCA workflow state (level, current phase, active features). Last recorded level is `Dynamic`; session memory recorded `Starter`. Treat the level as **not yet finalized** — confirm with the user before choosing a `/starter` vs `/dynamic` vs `/enterprise` workflow.
-  - `.bkit/state/memory.json`, `.bkit/state/session-history.json` — session bookkeeping.
-  - `.bkit/audit/*.jsonl` — append-only audit log of bkit actions.
-- bkit slash commands (`/pdca …`, `/development-pipeline`, phase skills `/phase-1-schema` … `/phase-9-deployment`) are the intended way to drive work here. Use `/pdca status` to inspect current PDCA state before starting a new feature.
-
-## Conventions Inherited From Global Config
-
-The user's global `~/.claude/CLAUDE.md` applies and overrides any conflicting defaults. Key points relevant to this repo:
-
-- **Language**: All gstack and bkit skill output (questions, options, section titles, generated docs) must be in **Korean**. Code identifiers, file paths, and shell commands stay in their original form.
-- **GitHub work**: Before any GitHub operation (repo create, PR, Actions), verify `gh --version`. Do not fall back to web-UI flows.
-- **Commit style** (Udacity guide, Korean-adapted, applies to every commit in this repo):
-  - Format: `type: Subject` (≤50 chars, imperative, no trailing period), blank line, optional body (≤72 chars/line, explains *what* and *why*, not *how*), blank line, optional footer (`Resolves: #N`).
-  - Allowed types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`. Never mix types in one commit.
-  - Commit per logical unit as soon as it is complete — do not batch a day's work into one commit. `docs`/`style`/`chore` may be batched together but must never be mixed with `feat`/`fix`/`refactor`.
-  - If a branch-prefix scheme (e.g. `[FE]`, `[BE]`) is later adopted, the prefix goes **before** the type: `[FE] feat: …`.
-
-## When Updating This File
-
-Once real code lands, replace this notice with concrete sections covering, at minimum:
-
-1. Build / run / test / lint commands actually defined in the project (and how to run a single test).
-2. The big-picture architecture that requires reading multiple files to understand — module boundaries, data flow, where state lives, external service dependencies.
-3. Any project-specific conventions that diverge from the global rules above.
-
-Do not pad this file with generic advice or speculative structure.
+- 사용자 대면 문자열·문서·커밋 메시지는 한국어. 코드 식별자·경로·명령은 원형 유지.
+- 커밋: `type: 제목`(≤50자, 명령형) + 본문(≤72자/줄, 무엇·왜). 타입 `feat|fix|docs|style|refactor|test|chore`, 논리 단위별 커밋, 타입 혼합 금지.
+- GitHub 작업 전 `gh --version`으로 CLI 확인. 웹 UI 흐름으로 대체하지 않는다.
